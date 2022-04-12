@@ -10,4 +10,14 @@ use the text file: opencv_solutions.txt for setup
 
 use export PATH=$PATH:/home/pi/.local/bin
 
+SETUP:
+install all the sudo apt-get dependencies (NOT PIP)
+UNinstall numpy
+UNinstall pip3 opencv and apt-get opencv
+UNinstall opencv-contrib-python
 
+pip3 install opencv-python (WITHOUT SUDO)
+pip3 install opencv-contrib-python==4.1.0.25
+
+chmod 777 setup.sh
+boi just run setup.sh
