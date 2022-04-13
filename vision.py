@@ -77,6 +77,17 @@ def main():
 
         # if cv.waitKey(1) == 'q':
         #     break
+            identifyPassword(fingercount)
+
+        cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+
+        if cv.waitKey(1) == 'q':
+            break
+
+    cap.release()
+    cv.destroyAllWindows()
+
+
 
     # cap.release()
     #cv.destroyAllWindows()

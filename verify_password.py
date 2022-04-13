@@ -31,3 +31,4 @@ def identifyPassword(fingercount):
             # password_stack = []
             # time.sleep(3)
             return password_stack
+main
