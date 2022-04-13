@@ -4,6 +4,7 @@ import mediapipe as mp
 #import mediapiperpi4 as mp
 from collections import Counter
 
+# image = cv.imread("img3.jpg")
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands = 1, min_detection_confidence=0.70)
@@ -12,15 +13,20 @@ fingercount = 0
 
 cap = cv.VideoCapture(0)
 
+password = [2, 5, 4]
+
+password_stack = []
+
 input_samples = []
 
-def normalizeFingerCount(fingercount):
-    global input_samples
+def identifyPassword(fingercount):
+    global password_stack, input_samples
+
     # collect input samples (for error correction)
     if len(input_samples) < 4:
         input_samples.append(fingercount)
         return
-
+        
     # next_digit will be determined based on input_samples
     next_digit = 0
 
@@ -29,7 +35,24 @@ def normalizeFingerCount(fingercount):
 
     input_samples = []
 
-    return next_digit
+    if next_digit == 0:
+        password_stack = []
+    else:
+        if len(password_stack) != 0:
+            if next_digit != password_stack[-1]:
+                password_stack.append(next_digit)
+        else:
+            password_stack.append(next_digit)
+            
+    print(password_stack)
+
+    if len(password_stack) == len(password):
+        if password == password_stack:
+            # print('unlocked')
+            # password_stack = []
+            # time.sleep(3)
+            return password_stack
+
 
 distance_thresholds = {'thumb': 1.2, 'index': 2, 'middle': 2, 'ring': 2, 'pinky': 2}
 
@@ -55,6 +78,7 @@ def detectFingersUp(res, frame):
     if abs(lms.landmark[mp_hands.HandLandmark.PINKY_TIP].y - lms.landmark[mp_hands.HandLandmark.WRIST].y) <= distance_thresholds['pinky']*n:
         fingercount -= 1
 
+    # print(fingercount)
     return fingercount
 
 def main():
@@ -69,14 +93,40 @@ def main():
 
         if res.multi_hand_landmarks:
             fingercount = detectFingersUp(res, frame)
-            password_digit = normalizeFingerCount(fingercount)
-            cap.release()
-            return password_digit
+            identifyPassword(fingercount)
 
-        #cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+        cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
 
-        # if cv.waitKey(1) == 'q':
-        #     break
+        if cv.waitKey(1) == 'q':
+            break
 
-    # cap.release()
-    #cv.destroyAllWindows()
+    cap.release()
+    cv.destroyAllWindows()
+
+'''
+def setUpPassword():
+    print('Start by making a fist.')
+    while True:
+
+        ret, frame = cap.read()
+        if not ret:
+            continue
+
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        res = hands.process(frame)
+
+        if res.multi_hand_landmarks:
+            fingercount = detectFingersUp(res, frame)
+            if fingercount == 0:
+                pass
+            
+
+        cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+
+        if cv.waitKey(1) == 'q':
+            break
+
+    cap.release()
+    cv.destroyAllWindows()
+
+'''
