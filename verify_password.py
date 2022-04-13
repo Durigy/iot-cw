@@ -1,3 +1,15 @@
+def get_password(pass_count=4):
+    pwd_list = []
+    while not len(pwd_list) == pass_count:
+        pwd_list.append()
+    return pwd_list
+
+
+def setUpPassword():
+    pass
+
+
+
 def identifyPassword(fingercount):
     global password_stack, input_samples
 
@@ -31,4 +43,3 @@ def identifyPassword(fingercount):
             # password_stack = []
             # time.sleep(3)
             return password_stack
-main
