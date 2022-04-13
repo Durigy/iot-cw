@@ -1,9 +1,4 @@
-import time
-import cv2 as cv
-import mediapipe as mp
-from collections import Counter
 import vision
-
 
 def get_password(mp_hands, mp_draw, hands, pass_count=4):
     pwd_list = []
