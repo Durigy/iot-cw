@@ -12,6 +12,7 @@ fingercount = 0
 
 cap = cv.VideoCapture(0)
 
+SAMPLES_COUNT = 0
 input_samples = []
 
 def normalizeFingerCount(fingercount):
@@ -71,23 +72,19 @@ def main():
             fingercount = detectFingersUp(res, frame)
             password_digit = normalizeFingerCount(fingercount)
             cap.release()
+            print(password_digit)
             return password_digit
 
         #cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
 
         # if cv.waitKey(1) == 'q':
         #     break
-            identifyPassword(fingercount)
+            # identifyPassword(fingercount)
 
-        cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+        # cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
 
-        if cv.waitKey(1) == 'q':
-            break
-
-    cap.release()
-    cv.destroyAllWindows()
-
-
+        # if cv.waitKey(1) == 'q':
+        #     break
 
     # cap.release()
     #cv.destroyAllWindows()
