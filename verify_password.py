@@ -36,7 +36,7 @@ def set_password(mp_hands, mp_draw, hands):
         elif finger_count != pwd_list[-1]: pwd_list.append(finger_count)
 
         print(pwd_list)
-        setText(pwd_list, 'white')
+        setText(str(pwd_list), 'white')
 
     return pwd_list
 

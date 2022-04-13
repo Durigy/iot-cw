@@ -62,6 +62,9 @@ def setText(text, color='white'):
         setRGB(100, 100 , 255)
     elif color == 'white':
         setRGB(255, 255, 255)
+    elif color == 'purple':
+        setRGB(155, 30, 155)
+        
 
     textCommand(0x01) # clear display
     time.sleep(.05)
