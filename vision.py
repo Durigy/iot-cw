@@ -1,24 +1,10 @@
-import time
 import cv2 as cv
-import mediapipe as mp
-#import mediapiperpi4 as mp
 from collections import Counter
 
-mp_hands = mp.solutions.hands
-mp_draw = mp.solutions.drawing_utils
-hands = mp_hands.Hands(static_image_mode=False, max_num_hands = 1, min_detection_confidence=0.70)
+def normalizeFingerCount(fingercount, input_samples, SAMPLES_COUNT, MIN_SAMPLES):
 
-fingercount = 0
-
-cap = cv.VideoCapture(0)
-
-SAMPLES_COUNT = 0
-input_samples = []
-
-def normalizeFingerCount(fingercount):
-    global input_samples
     # collect input samples (for error correction)
-    if len(input_samples) < 4:
+    if SAMPLES_COUNT <= MIN_SAMPLES:
         input_samples.append(fingercount)
         return
 
@@ -32,9 +18,8 @@ def normalizeFingerCount(fingercount):
 
     return next_digit
 
-distance_thresholds = {'thumb': 1.2, 'index': 2, 'middle': 2, 'ring': 2, 'pinky': 2}
 
-def detectFingersUp(res, frame):
+def detectFingersUp(res, frame, mp_hands, mp_draw, distance_thresholds):
     
     lms = res.multi_hand_landmarks[0]
     mp_draw.draw_landmarks(frame, lms, mp_hands.HAND_CONNECTIONS)
@@ -58,8 +43,19 @@ def detectFingersUp(res, frame):
 
     return fingercount
 
-def main():
-    while True:
+def get_finger_count(mp_hands, mp_draw, hands):
+    
+    cap = cv.VideoCapture(0)
+
+    SAMPLES_COUNT = 0
+    MIN_SAMPLES = 3
+    input_samples = []
+
+    distance_thresholds = {'thumb': 1.2, 'index': 2, 'middle': 2, 'ring': 2, 'pinky': 2}
+
+    password_digit = None
+
+    while SAMPLES_COUNT <= MIN_SAMPLES:
 
         ret, frame = cap.read()
         if not ret:
@@ -69,11 +65,19 @@ def main():
         res = hands.process(frame)
 
         if res.multi_hand_landmarks:
-            fingercount = detectFingersUp(res, frame)
-            password_digit = normalizeFingerCount(fingercount)
-            cap.release()
-            print(password_digit)
-            return password_digit
+            fingercount = detectFingersUp(res, frame, mp_hands, mp_draw, distance_thresholds)
+            SAMPLES_COUNT += 1
+            password_digit = normalizeFingerCount(fingercount, input_samples, SAMPLES_COUNT, MIN_SAMPLES)
+
+            if password_digit is None:
+                continue
+            else:
+                break
+
+    cap.release()
+    
+    return password_digit
+
 
         #cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
 
