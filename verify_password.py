@@ -8,14 +8,24 @@ import vision
 def get_password(mp_hands, mp_draw, hands, pass_count=4):
     pwd_list = []
     finger_count = 0
-    while not len(pwd_list) == pass_count:
-        finger_count = vision.get_finger_count()
+    while len(pwd_list) != pass_count:
+        finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
         if finger_count != pwd_list[-1]:
             pwd_list.append(finger_count)
 
     return pwd_list
 
 
+def set_password(mp_hands, mp_draw, hands):
+    pwd_list = []
+    finger_count = 0
+    while finger_count != 0:
+        finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
+        if finger_count == 0: continue
+        if finger_count != pwd_list[-1]:
+            pwd_list.append(finger_count)
+
+    return pwd_list
 
 
 ### old stuff ###
