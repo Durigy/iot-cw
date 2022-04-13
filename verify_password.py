@@ -17,8 +17,9 @@ def set_password(mp_hands, mp_draw, hands):
     while finger_count != 0:
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
         if finger_count == 0: continue
-        if finger_count != pwd_list[-1]:
-            pwd_list.append(finger_count)
+        
+        if len(pwd_list) == 0: pwd_list.append(finger_count)
+        elif finger_count != pwd_list[-1]: pwd_list.append(finger_count)
 
     return pwd_list
 
