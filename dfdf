@@ -1,9 +1,7 @@
+from pkg_resources import working_set
 from verify_password import get_password
 from verify_password import get_password, set_password
-from lcd import setText
 import mediapipe as mp
-from ultra_sonic import person_detected
-from light import sort_light
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
@@ -13,18 +11,13 @@ working_pwd = []
 pwd = []
 
 def main():
+    # while True:
+    #     vision.get_finger_count(mp_hands, mp_draw, hands)
     if len(pwd) == 0:
-        setText('Setup your\nPassword')
+        
         pwd = set_password(mp_hands, mp_draw, hands)
-        setText('Setup your\nPassword')
 
-
-    if person_detected():
-        sort_light()
-        setText('Enter your\nPassword')
-        working_pwd = get_password(mp_hands, mp_draw, hands, pass_count=4)
-        setText(f'[ACCESS GRANTED]\n{str(working_pwd)}', 'green')
-
+    working_pwd = get_password(mp_hands, mp_draw, hands, pass_count=4)
 
 
 main()
