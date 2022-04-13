@@ -73,7 +73,7 @@ def setText(text):
  
 # example code
 if __name__=="__main__":
-    
+    '''
     setRGB(0,128,64)
     time.sleep(2)
     while True:
@@ -91,3 +91,5 @@ if __name__=="__main__":
         except KeyboardInterrupt:
             print ("Terminated.")
             os._exit(0)
+    '''
+    setText('')
