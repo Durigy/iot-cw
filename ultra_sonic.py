@@ -8,9 +8,7 @@ grovepi.set_bus("RPI_1")
 # SIG,NC,VCC,GND
 ultrasonic_ranger = 3
 
-repeat_times = 5
-
-def person_detected():
+def person_detected(repeat_times = 5):
     distance = 0
     for _ in range(repeat_times):
         try:
