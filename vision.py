@@ -12,7 +12,6 @@ def normalizeFingerCount(fingercount, input_samples, SAMPLES_COUNT, MIN_SAMPLES)
     next_digit = 0
 
     next_digit = Counter(input_samples).most_common(1)[0][0]
-    print(next_digit)
 
     input_samples = []
 

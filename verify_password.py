@@ -1,12 +1,25 @@
 import vision
+from lcd import setText
 
 def get_password(mp_hands, mp_draw, hands, pass_count=4):
     pwd_list = []
     finger_count = 0
     while len(pwd_list) != pass_count:
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
-        if len(pwd_list) == 0: pwd_list.append(finger_count)
-        elif finger_count != pwd_list[-1]: pwd_list.append(finger_count)
+
+        if finger_count == 0:
+            pwd_list = []
+            setText('Empty', 'red')
+            continue
+
+        if len(pwd_list) == 0:
+            pwd_list.append(finger_count)
+        elif finger_count != pwd_list[-1]:
+            pwd_list.append(finger_count)
+
+        print(pwd_list)
+
+        setText(str(pwd_list))
 
     return pwd_list
 
@@ -14,14 +27,20 @@ def get_password(mp_hands, mp_draw, hands, pass_count=4):
 def set_password(mp_hands, mp_draw, hands):
     pwd_list = []
     finger_count = 0
-    while finger_count != 0:
+    while True:
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
-        if finger_count == 0: continue
+        if finger_count == 0:
+            break
         
         if len(pwd_list) == 0: pwd_list.append(finger_count)
         elif finger_count != pwd_list[-1]: pwd_list.append(finger_count)
 
+        print(pwd_list)
+        setText(pwd_list, 'white')
+
     return pwd_list
+
+
 
 
 ### old stuff ###

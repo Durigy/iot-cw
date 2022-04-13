@@ -33,8 +33,9 @@ else:
         bus = smbus.SMBus(0)
 
 # this device has two I2C addresses
-DISPLAY_RGB_ADDR = 0x62
 DISPLAY_TEXT_ADDR = 0x3e
+
+DISPLAY_RGB_ADDR = 0x62
 
 # set backlight to (R,G,B) (values from 0..255 for each)
 def setRGB(r,g,b):
@@ -44,14 +45,24 @@ def setRGB(r,g,b):
     bus.write_byte_data(DISPLAY_RGB_ADDR,4,r)
     bus.write_byte_data(DISPLAY_RGB_ADDR,3,g)
     bus.write_byte_data(DISPLAY_RGB_ADDR,2,b)
- 
+
 # send command to display (no need for external use)    
 def textCommand(cmd):
     bus.write_byte_data(DISPLAY_TEXT_ADDR,0x80,cmd)
 
 
 # set display text \n for second line(or auto wrap)     
-def setText(text):
+def setText(text, color='white'):
+
+    if color == 'red':
+        setRGB(255, 0 , 0)
+    elif color == 'green':
+        setRGB(0, 255, 0)
+    elif color == 'blue':
+        setRGB(100, 100 , 255)
+    elif color == 'white':
+        setRGB(255, 255, 255)
+
     textCommand(0x01) # clear display
     time.sleep(.05)
     textCommand(0x08 | 0x04) # display on, no cursor
@@ -70,26 +81,3 @@ def setText(text):
                 continue
         count += 1
         bus.write_byte_data(DISPLAY_TEXT_ADDR,0x40,ord(c))
- 
-# example code
-if __name__=="__main__":
-    '''
-    setRGB(0,128,64)
-    time.sleep(2)
-    while True:
-        try:
-            # This example uses the blue colored sensor. 
-            # The first parameter is the port, the second parameter is the type of sensor.
-            [temp,humidity] = grovepi.dht(sensor,blue)
-            time.sleep(3)
-            x = json.dumps({'temperature': temp})
-            if math.isnan(temp) == False and math.isnan(humidity) == False:
-                #setText('aaaaaaaa')
-                setText(x)
-                time.sleep(0.1)
-                sys.stdout.write(x)
-        except KeyboardInterrupt:
-            print ("Terminated.")
-            os._exit(0)
-    '''
-    setText('')
