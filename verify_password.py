@@ -37,7 +37,7 @@ def check_password(mp_hands, mp_draw, hands):
 
         setText(' '.join(str(i) for i in pwd_list))
 
-    if bcrypt.check_password_hash(hashed_pwd, str(''.join(str(i) for i in pwd_list))):
+    if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
         return True
     else:
         return False
@@ -75,7 +75,7 @@ def setup_password(mp_hands, mp_draw, hands):
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
         if len(working_pwd) > 0:
-            hashed_password = bcrypt.generate_password_hash(''.join(str(i) for i in working_pwd)).decode('utf-8')
+            hashed_password = bcrypt.hashpw(str.encode(''.join(str(i) for i in working_pwd)), bcrypt.gensalt()).decode('utf-8')
             setText('PASSWORD CREATED', 'green')
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
