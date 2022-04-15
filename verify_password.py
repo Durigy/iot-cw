@@ -60,7 +60,7 @@ def set_password(mp_hands, mp_draw, hands):
             buzzer('.')
 
         print(pwd_list)
-        setText(str(pwd_list), 'white')
+        setText(' '.join(str(i) for i in pwd_list), 'white')
 
     return pwd_list
 
