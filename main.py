@@ -31,34 +31,43 @@ def start_countdown(countdown):
 
 def armed_mode():
     setText('', 'off')
+
+    global unlocked, countdown_over
+
+    unlocked = False
+    countdown_over = False
+
     while True:
         if person_detected():
-            global unlocked, countdown_over
-            countdown = 30
+            # global unlocked, countdown_over
+            countdown = 3
             unlocked = False
             countdown_over = False
             thread = t.Thread(target=start_countdown, args=[countdown])
             thread.start()
             while True:
                 if check_password(mp_hands, mp_draw, hands):
-                    unlocked = True
                     break
             break
 
     # at this point the password will have been accepted
-    unlocked = False
-    countdown_over = False
+    
     disarmed_mode()
 
 
 def disarmed_mode():
-    setText('', 'off')            
+    global unlocked
+    unlocked = True
+    setText('', 'off')           
 
 def set_off_alarm():
     # set off alarm and continuously check global unlock variable to turn it off
-    global unlocked
-    while not unlocked:
-        buzzer('-----')
+    while True:
+        global unlocked
+        if not unlocked:
+            buzzer('-----')
+        else:
+            break
         time.sleep(1)
     disarmed_mode()
 

@@ -8,6 +8,8 @@ from os.path import exists
 # from ast import literal_eval # https://www.askpython.com/python/string/python-convert-string-to-list
 
 def check_password(mp_hands, mp_draw, hands):
+    setText('', 'white')
+    
     pwd_list = []
     finger_count = 0
 
@@ -21,7 +23,7 @@ def check_password(mp_hands, mp_draw, hands):
         print('Error reading password!')
         return
 
-    while not bcrypt.checkpw(bytes(str(''.join(str(i) for i in pwd_list)),'UTF-8'), hashed_pwd):
+    while not bcrypt.checkpw(str.encode(''.join(str(i) for i in pwd_list)), str.encode(hashed_pwd)):
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
 
         if finger_count == 0:
@@ -67,7 +69,7 @@ def set_password(mp_hands, mp_draw, hands):
 
 
 def setup_password(mp_hands, mp_draw, hands):
-    for _ in range(3):
+    for _ in range(1):
         setText('', 'purple')
         buzzer('...')
         setText('CREATE PASSWORD', 'purple')
