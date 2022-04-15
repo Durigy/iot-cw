@@ -19,5 +19,8 @@ def read_button():
 
         except IOError:
             print ("Error")
-    return Counter(avg_press).most_common(1)[0][0]
+    if Counter(avg_press).most_common(1)[0][0] == 1:
+        return True
+    else:
+        return False
     
