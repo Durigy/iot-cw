@@ -7,15 +7,17 @@
 * Copyright: Following code is written for educational purposes by Cardiff University.
 * Latest Version: 05/08/2021 (by Hakan KAYAN)
 * Modified from: https://github.com/DexterInd/GrovePi.git
+
+* Adapted by group 13
 ***************************************************************************/
 """
 
 import time
 import sys
-import os
-import grovepi
-import math
-import json
+# import os
+# import grovepi
+# import math
+# import json
 
 sensor = 4  # The Sensor goes on digital port 4.
 blue = 0    # The Blue colored sensor.
