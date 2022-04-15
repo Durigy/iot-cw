@@ -5,10 +5,21 @@ from buzzer import buzzer
 from lcd import setText
 import bcrypt
 
-def check_password(mp_hands, mp_draw, hands, pass_count=4):
+def check_password(mp_hands, mp_draw, hands):
     pwd_list = []
     finger_count = 0
-    while len(pwd_list) != pass_count:
+
+    hashed_pwd = ''
+
+    try:
+        f = open("p.txt", 'r')
+        hashed_pwd = f.read()
+        f.close()
+    except:
+        print('Error reading password!')
+        return
+
+    while len(pwd_list) != len(list(hashed_pwd)):
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
 
         if finger_count == 0:
@@ -23,19 +34,9 @@ def check_password(mp_hands, mp_draw, hands, pass_count=4):
 
         print(pwd_list)
 
-        setText(str(pwd_list))
+        setText(' '.join(str(i) for i in pwd_list))
 
-    hashed_pwd = ''
-
-    try:
-        f = open("p.txt", 'r')
-        hashed_pwd = f.read()
-        f.close()
-    except:
-        print('Error reading password!')
-        return
-
-    if bcrypt.check_password_hash(hashed_pwd, str(pwd_list)):
+    if bcrypt.check_password_hash(hashed_pwd, str(''.join(str(i) for i in pwd_list))):
         return True
     else:
         return False
@@ -62,6 +63,7 @@ def set_password(mp_hands, mp_draw, hands):
 
     return pwd_list
 
+
 def setup_password(mp_hands, mp_draw, hands):
     for _ in range(5):
         setText('', 'purple')
@@ -71,10 +73,10 @@ def setup_password(mp_hands, mp_draw, hands):
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
         if len(working_pwd) > 0:
-            hashed_password = bcrypt.generate_password_hash(str(working_pwd)).decode('utf-8')
+            hashed_password = bcrypt.generate_password_hash(''.join(str(i) for i in working_pwd)).decode('utf-8')
             setText('PASSWORD CREATED', 'green')
             with open('p.txt', 'w') as f:
-                f.write(str(hashed_password))
+                f.write(hashed_password)
             break
 
 
