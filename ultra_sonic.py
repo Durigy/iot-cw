@@ -1,14 +1,14 @@
 import grovepi
 import time
 
-# set I2C to use the hardware bus
-grovepi.set_bus("RPI_1")
-
-# Connect the Grove Ultrasonic Ranger to digital port D3
-# SIG,NC,VCC,GND
-ultrasonic_ranger = 3
-
 def person_detected(max_distance = 50, repeat_times = 5):
+    # set I2C to use the hardware bus
+    grovepi.set_bus("RPI_1")
+
+    # Connect the Grove Ultrasonic Ranger to digital port D3
+    # SIG,NC,VCC,GND
+    ultrasonic_ranger = 3
+    
     distance = 0
 
     for _ in range(repeat_times):

@@ -3,12 +3,12 @@ import time
 import grovepi
 from collections import Counter
 
-# Connect the Grove Button to digital port D3
-# SIG,NC,VCC,GND
-button = 2
-grovepi.pinMode(button,"INPUT")
-
 def read_button():
+
+    # Connect the Grove Button to digital port D3
+    # SIG,NC,VCC,GND
+    button = 2
+    grovepi.pinMode(button,"INPUT")
     avg_press = []
     for _ in range(5):
         try:

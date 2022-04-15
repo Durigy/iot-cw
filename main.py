@@ -2,9 +2,10 @@ from verify_password import get_password
 from verify_password import get_password, set_password
 from lcd import setText
 from buzzer import buzzer
+from button import read_button
 import mediapipe as mp
 import time
-# from ultra_sonic import person_detected
+from ultra_sonic import person_detected
 # from light import sort_light
 
 mp_hands = mp.solutions.hands
@@ -41,12 +42,17 @@ def setup_password():
 
     return working_pwd
 
-def hibernate():
+def armed_mode():
     setText('', 'off')
     while True:
-        
+        if person_detected():
+            pass
 
+def disarmed_mode():
+    setText('', 'off')            
 
+def set_off_alarm():
+    pass
 
 def main():
 
@@ -59,7 +65,7 @@ def main():
         time.sleep(3)
         setText('', 'white')
 
-    
+    disarmed_mode()
 
 
 
@@ -71,4 +77,5 @@ def main():
 
 
 
-main()
+# main()
+read_button()
