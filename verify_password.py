@@ -21,7 +21,7 @@ def check_password(mp_hands, mp_draw, hands):
         print('Error reading password!')
         return
 
-    while len(pwd_list) != len(list(hashed_pwd)):
+    while not bcrypt.checkpw(bytes(str(''.join(str(i) for i in pwd_list)),'UTF-8'), hashed_pwd):
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
 
         if finger_count == 0:
@@ -38,10 +38,10 @@ def check_password(mp_hands, mp_draw, hands):
 
         setText(' '.join(str(i) for i in pwd_list))
 
-    if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
-        return True
-    else:
-        return False
+    # if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
+    return True
+    # else:
+    #     return False
 
 
 def set_password(mp_hands, mp_draw, hands):
@@ -72,7 +72,17 @@ def setup_password(mp_hands, mp_draw, hands):
         buzzer('...')
         setText('CREATE PASSWORD', 'purple')
         time.sleep(0.5)
-        
+
+    if exists('p.txt'):
+        try:
+            f = open("p.txt", 'r')
+            hashed_pwd = f.read()
+            f.close()
+            if hashed_pwd != '': return False
+        except:
+            print('Error reading password!')
+            return
+
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
         if len(working_pwd) > 0:
