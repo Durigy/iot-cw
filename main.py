@@ -6,11 +6,15 @@ from button import read_button
 import mediapipe as mp
 import time
 from ultra_sonic import person_detected
+import threading as t
 # from light import sort_light
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands = 1, min_detection_confidence=0.70)
+
+unlocked = False
+countdown_over = False
 
 def read_password():
     try:
@@ -42,11 +46,29 @@ def setup_password():
 
     return working_pwd
 
+def start_countdown(countdown):
+    global unlocked, countdown_over
+    start = time.time()
+    while time.time() - start < countdown and not unlocked:
+        continue
+    if unlocked:
+        exit()
+        # return
+    else:
+        set_off_alarm()
+
+
 def armed_mode():
     setText('', 'off')
     while True:
         if person_detected():
-            pass
+            countdown = 30
+            unlocked = False
+            thread = t.Thread(target=start_countdown, args=countdown)
+            thread.start()
+
+            
+
 
 def disarmed_mode():
     setText('', 'off')            

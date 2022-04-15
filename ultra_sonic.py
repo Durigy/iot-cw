@@ -25,3 +25,4 @@ def person_detected(max_distance = 50, repeat_times = 5):
         return True
     else:
         return False
+
