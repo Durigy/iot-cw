@@ -3,7 +3,7 @@ import time
 
 def person_detected(max_distance = 50, repeat_times = 5):
     # set I2C to use the hardware bus
-    grovepi.set_bus("RPI_1")
+    # grovepi.set_bus("RPI_1")
 
     # Connect the Grove Ultrasonic Ranger to digital port D3
     # SIG,NC,VCC,GND
@@ -17,7 +17,7 @@ def person_detected(max_distance = 50, repeat_times = 5):
             distance += grovepi.ultrasonicRead(ultrasonic_ranger)
 
         except Exception as e:
-            print ("Error:{}".format(e))
+            print ("Ultrasonic Error:{}".format(e))
 
         time.sleep(0.1) # don't overload the i2c bus
 

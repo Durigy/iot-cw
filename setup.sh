@@ -9,3 +9,4 @@ pip3 install opencv-python
 pip3 install opencv-contrib-python==4.1.0.25
 
 pip3 install grovepi
+pip3 install bcrypt
