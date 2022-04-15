@@ -1,8 +1,7 @@
-from verify_password import get_password
-from verify_password import get_password, set_password
+from verify_password import check_password, set_password
 from lcd import setText
 from buzzer import buzzer
-from button import read_button
+# from button import read_button
 import mediapipe as mp
 import time
 from ultra_sonic import person_detected
@@ -55,27 +54,46 @@ def start_countdown(countdown):
         exit()
         # return
     else:
+        # prioritize setting off the alarm then return to the caller
         set_off_alarm()
+        exit()
 
 
 def armed_mode():
     setText('', 'off')
     while True:
         if person_detected():
+            global unlocked, countdown_over
             countdown = 30
             unlocked = False
-            thread = t.Thread(target=start_countdown, args=countdown)
+            countdown_over = False
+            thread = t.Thread(target=start_countdown, args=[countdown])
             thread.start()
+            while not unlocked:
+                if check_password(mp_hands, mp_draw, hands):
+                    unlocked = True
+            break
 
-            
+    # at this point the password will have been accepted
+    unlocked = False
+    countdown_over = False
+    disarmed_mode()
 
 
 def disarmed_mode():
     setText('', 'off')            
 
 def set_off_alarm():
-    pass
+    # set off alarm and continuously check global unlock variable to turn it off
+    global unlocked
+    while not unlocked:
+        buzzer('-----')
+        time.sleep(1)
+    disarmed_mode()
 
+
+# for testing use password as a global variable
+password = ''
 def main():
 
     setText('', 'white')
@@ -89,6 +107,9 @@ def main():
 
     disarmed_mode()
 
+    # FOR TESTING WE CALL armed()
+    armed_mode()
+
 
 
     # if person_detected():
@@ -99,5 +120,4 @@ def main():
 
 
 
-# main()
-read_button()
+main()
