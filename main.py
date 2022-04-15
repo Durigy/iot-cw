@@ -1,4 +1,4 @@
-from verify_password import check_password, set_password
+from verify_password import check_password, setup_password
 from lcd import setText
 from buzzer import buzzer
 # from button import read_button
@@ -14,36 +14,6 @@ hands = mp_hands.Hands(static_image_mode=False, max_num_hands = 1, min_detection
 
 unlocked = False
 countdown_over = False
-
-def read_password():
-    try:
-        f = open("p.txt", 'r')
-        p = f.read()
-        f.close()
-        return p
-    except:
-        return ''
-
-def setup_password():
-    setText('', 'purple')
-    buzzer('...')
-    setText('CREATE PASSWORD', 'purple')
-    time.sleep(1)
-    setText('', 'purple')
-    time.sleep(0.5)
-    setText('CREATE PASSWORD', 'purple')
-    time.sleep(1)
-    setText('', 'purple')
-    time.sleep(0.5)
-    setText('CREATE PASSWORD', 'purple')
-
-    working_pwd = set_password(mp_hands, mp_draw, hands)
-
-    setText('PASSWORD CREATED', 'green')
-    with open('p.txt', 'w') as f:
-        f.write(str(working_pwd))
-
-    return working_pwd
 
 def start_countdown(countdown):
     global unlocked, countdown_over
@@ -69,9 +39,10 @@ def armed_mode():
             countdown_over = False
             thread = t.Thread(target=start_countdown, args=[countdown])
             thread.start()
-            while not unlocked:
+            while True:
                 if check_password(mp_hands, mp_draw, hands):
                     unlocked = True
+                    break
             break
 
     # at this point the password will have been accepted
@@ -98,12 +69,7 @@ def main():
 
     setText('', 'white')
 
-    password = read_password()
-
-    if len(password) == 0:
-        password = setup_password()
-        time.sleep(3)
-        setText('', 'white')
+    setup_password(mp_hands, mp_draw, hands)
 
     disarmed_mode()
 

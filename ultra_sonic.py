@@ -17,11 +17,13 @@ def person_detected(max_distance = 50, repeat_times = 5):
             distance += grovepi.ultrasonicRead(ultrasonic_ranger)
 
         except Exception as e:
-            print ("Ultrasonic Error:{}".format(e))
+            # print ("Ultrasonic Error:{}".format(e))
+            pass
 
         time.sleep(0.1) # don't overload the i2c bus
 
     if abs(distance / repeat_times) < max_distance:
+        print('ultra yes')
         return True
     else:
         return False
