@@ -1,3 +1,4 @@
+import time
 import vision
 from buzzer import buzzer
 from lcd import setText
@@ -46,6 +47,22 @@ def set_password(mp_hands, mp_draw, hands):
 
     return pwd_list
 
+def setup_password(mp_hands, mp_draw, hands):
+    for _ in range(5):
+        setText('', 'purple')
+        buzzer('...')
+        setText('CREATE PASSWORD', 'purple')
+        time.sleep(0.5)
+    while True:
+        working_pwd = set_password(mp_hands, mp_draw, hands)
+        if len(working_pwd) > 0:
+            setText('PASSWORD CREATED', 'green')
+            with open('p.txt', 'w') as f:
+                f.write(str(working_pwd))
+            break
+        
+
+    return working_pwd
 
 
 
