@@ -4,6 +4,7 @@ import vision
 from buzzer import buzzer
 from lcd import setText
 import bcrypt
+# from ast import literal_eval # https://www.askpython.com/python/string/python-convert-string-to-list
 
 def check_password(mp_hands, mp_draw, hands):
     pwd_list = []
@@ -65,11 +66,12 @@ def set_password(mp_hands, mp_draw, hands):
 
 
 def setup_password(mp_hands, mp_draw, hands):
-    for _ in range(5):
+    for _ in range(3):
         setText('', 'purple')
         buzzer('...')
         setText('CREATE PASSWORD', 'purple')
         time.sleep(0.5)
+        
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
         if len(working_pwd) > 0:
@@ -78,9 +80,8 @@ def setup_password(mp_hands, mp_draw, hands):
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
             break
-
-
-    return working_pwd
+        
+    return True
 
 
 
