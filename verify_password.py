@@ -1,9 +1,11 @@
+from distutils.log import error
 import time
 import vision
 from buzzer import buzzer
 from lcd import setText
+import bcrypt
 
-def get_password(mp_hands, mp_draw, hands, pass_count=4):
+def check_password(mp_hands, mp_draw, hands, pass_count=4):
     pwd_list = []
     finger_count = 0
     while len(pwd_list) != pass_count:
@@ -23,7 +25,20 @@ def get_password(mp_hands, mp_draw, hands, pass_count=4):
 
         setText(str(pwd_list))
 
-    return pwd_list
+    hashed_pwd = ''
+
+    try:
+        f = open("p.txt", 'r')
+        hashed_pwd = f.read()
+        f.close()
+    except:
+        print('Error reading password!')
+        return
+
+    if bcrypt.check_password_hash(hashed_pwd, str(pwd_list)):
+        return True
+    else:
+        return False
 
 
 def set_password(mp_hands, mp_draw, hands):
@@ -56,11 +71,12 @@ def setup_password(mp_hands, mp_draw, hands):
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
         if len(working_pwd) > 0:
+            hashed_password = bcrypt.generate_password_hash(str(working_pwd)).decode('utf-8')
             setText('PASSWORD CREATED', 'green')
             with open('p.txt', 'w') as f:
-                f.write(str(working_pwd))
+                f.write(str(hashed_password))
             break
-        
+
 
     return working_pwd
 
