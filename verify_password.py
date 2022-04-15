@@ -4,6 +4,7 @@ import vision
 from buzzer import buzzer
 from lcd import setText
 import bcrypt
+from os.path import exists
 # from ast import literal_eval # https://www.askpython.com/python/string/python-convert-string-to-list
 
 def check_password(mp_hands, mp_draw, hands):
