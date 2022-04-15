@@ -8,8 +8,9 @@ grovepi.set_bus("RPI_1")
 # SIG,NC,VCC,GND
 ultrasonic_ranger = 3
 
-def person_detected(repeat_times = 5):
+def person_detected(max_distance = 30, repeat_times = 5):
     distance = 0
+
     for _ in range(repeat_times):
         try:
             # Read distance value from Ultrasonic
@@ -19,4 +20,8 @@ def person_detected(repeat_times = 5):
             print ("Error:{}".format(e))
 
         time.sleep(0.1) # don't overload the i2c bus
-    return abs(distance / repeat_times)
+
+    if abs(distance / repeat_times) < max_distance:
+        return True
+    else:
+        return False
