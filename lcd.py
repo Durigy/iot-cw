@@ -17,6 +17,8 @@ import grovepi
 import math
 import json
 
+# CONNECT LCD TO I2C-2
+
 sensor = 4  # The Sensor goes on digital port 4.
 blue = 0    # The Blue colored sensor.
 
@@ -64,7 +66,8 @@ def setText(text, color='white'):
         setRGB(255, 255, 255)
     elif color == 'purple':
         setRGB(155, 30, 155)
-        
+    elif color == 'off':
+        setRGB(0, 0, 0)
 
     textCommand(0x01) # clear display
     time.sleep(.05)

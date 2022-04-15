@@ -1,6 +1,7 @@
 from verify_password import get_password
 from verify_password import get_password, set_password
 from lcd import setText
+from buzzer import buzzer
 import mediapipe as mp
 import time
 # from ultra_sonic import person_detected
@@ -20,14 +21,16 @@ def read_password():
         return ''
 
 def setup_password():
-    setText('CREATE PASSWORD', 'purple')
-    time.sleep(1.5)
     setText('', 'purple')
-    time.sleep(1)
+    buzzer('...')
     setText('CREATE PASSWORD', 'purple')
-    time.sleep(1.5)
-    setText('', 'purple')
     time.sleep(1)
+    setText('', 'purple')
+    time.sleep(0.5)
+    setText('CREATE PASSWORD', 'purple')
+    time.sleep(1)
+    setText('', 'purple')
+    time.sleep(0.5)
     setText('CREATE PASSWORD', 'purple')
 
     working_pwd = set_password(mp_hands, mp_draw, hands)
@@ -38,15 +41,25 @@ def setup_password():
 
     return working_pwd
 
+def hibernate():
+    setText('', 'off')
+    while True:
+        
+
+
+
 def main():
 
+    setText('', 'white')
+
     password = read_password()
-    setText('')
 
     if len(password) == 0:
         password = setup_password()
+        time.sleep(3)
+        setText('', 'white')
 
-        
+    
 
 
 

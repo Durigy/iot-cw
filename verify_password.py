@@ -1,4 +1,5 @@
 import vision
+from buzzer import buzzer
 from lcd import setText
 
 def get_password(mp_hands, mp_draw, hands, pass_count=4):
@@ -30,10 +31,15 @@ def set_password(mp_hands, mp_draw, hands):
     while True:
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
         if finger_count == 0:
+            buzzer('--')
             break
         
-        if len(pwd_list) == 0: pwd_list.append(finger_count)
-        elif finger_count != pwd_list[-1]: pwd_list.append(finger_count)
+        if len(pwd_list) == 0:
+            pwd_list.append(finger_count)
+            buzzer('.')
+        elif finger_count != pwd_list[-1]:
+            pwd_list.append(finger_count)
+            buzzer('.')
 
         print(pwd_list)
         setText(str(pwd_list), 'white')
