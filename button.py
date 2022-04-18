@@ -1,5 +1,3 @@
-from importlib.resources import read_binary
-import re
 import time
 import grovepi
 from collections import Counter
@@ -8,7 +6,7 @@ def read_button():
 
     # Connect the Grove Button to digital port D3
     # SIG,NC,VCC,GND
-    button = 2
+    button = 4
     grovepi.pinMode(button,"INPUT")
     # avg_press = []
     # for _ in range(5):

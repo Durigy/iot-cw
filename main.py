@@ -88,6 +88,7 @@ def main():
 
 
     # if person_detected():
+    #     print('hello world')
     #     sort_light()
     #     setText('Enter your\nPassword')
     #     working_pwd = get_password(mp_hands, mp_draw, hands, pass_count=4)
