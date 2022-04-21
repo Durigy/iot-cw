@@ -55,12 +55,6 @@ def armed_mode():
             thread = t.Thread(target=start_countdown_for_alarm, args=[countdown])
             thread.start()
 
-            url = 'https://5qu.me/api/send_data'
-            data = {'doorOpen': 'true'}
-
-            # send data
-            requests.post(url, json = json.dumps(data))
-
             while True:
                 if check_password(mp_hands, mp_draw, hands):
                     break
@@ -133,6 +127,14 @@ def set_off_alarm():
 # for testing use password as a global variable
 password = ''
 def main():
+
+# url = 'https://5qu.me/api/send_data'
+    url = 'https://rlwb.space/pytest2/api'
+    data = {'doorOpen': 'true'}
+
+    # send data
+    r = requests.post(url, json = json.dumps(data))
+    print(f"{r.text} HERE HER HERE H")
 
     setText('', 'white')
 
