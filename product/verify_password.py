@@ -1,4 +1,5 @@
 from distutils.log import error
+import pwd
 import time
 import vision
 from buzzer import buzzer
@@ -88,13 +89,30 @@ def setup_password(mp_hands, mp_draw, hands):
 
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
-        if len(working_pwd) > 0:
+
+        setText('Save password?\n1: Yes, 2: No. Try again.')
+
+        decision = ''
+
+        while True:
+            decision = vision.get_finger_count(mp_hands, mp_draw, hands)
+
+            if decision not in (1, 2):
+                continue
+
+            break
+            
+        if len(working_pwd) > 0 and decision == 1:
+            buzzer('.')
             hashed_password = bcrypt.hashpw(str.encode(''.join(str(i) for i in working_pwd)), bcrypt.gensalt()).decode('utf-8')
             setText('PASSWORD CREATED', 'green')
             time.sleep(2)
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
             break
+        else:
+            buzzer('..')
+            time.sleep(2)
         
     return True
 

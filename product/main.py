@@ -8,6 +8,7 @@ from ultra_sonic import person_detected
 import threading as t
 # from vision import get_finger_count
 # from light import sort_light
+from light import sort_light
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
@@ -43,6 +44,10 @@ def armed_mode():
 
     while True:
         if person_detected():
+            # check the lights and turn them on
+            sort_light()
+
+            # global unlocked, countdown_over
             countdown = 3
             unlocked = False
             thread = t.Thread(target=start_countdown_for_alarm, args=[countdown])
