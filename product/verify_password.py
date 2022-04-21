@@ -25,23 +25,26 @@ def check_password(mp_hands, mp_draw, hands):
         return
 
     while not bcrypt.checkpw(str.encode(''.join(str(i) for i in pwd_list)), str.encode(hashed_pwd)):
-        finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
+        try:
+            finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
 
-        if finger_count == 0:
-            pwd_list = []
-            setText('Empty', 'red')
-            continue
+            if finger_count == 0:
+                pwd_list = []
+                setText('Empty', 'red')
+                continue
 
-        if len(pwd_list) == 0:
-            pwd_list.append(finger_count)
-        elif finger_count != pwd_list[-1]:
-            pwd_list.append(finger_count)
+            if len(pwd_list) == 0:
+                pwd_list.append(finger_count)
+            elif finger_count != pwd_list[-1]:
+                pwd_list.append(finger_count)
 
-        print(pwd_list)
-        print(' '.join(str(i) for i in pwd_list))
-        to_display = ' '.join(str(i) for i in pwd_list)
-        setText(to_display)
-        buzzer('.')
+            print(pwd_list)
+            print(' '.join(str(i) for i in pwd_list))
+            to_display = ' '.join(str(i) for i in pwd_list)
+            setText(to_display)
+            buzzer('.')
+        except:
+            print('check_password_error in iteration')
 
     # if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
     # print('returning true check_password')
