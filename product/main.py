@@ -9,6 +9,8 @@ import threading as t
 from vision import get_finger_count
 # from light import sort_light
 from light import sort_light, turn_light_off
+import requests
+import json
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
@@ -52,6 +54,13 @@ def armed_mode():
             # unlocked = False
             thread = t.Thread(target=start_countdown_for_alarm, args=[countdown])
             thread.start()
+
+            url = 'https://5qu.me/api/send_data'
+            data = {'doorOpen': 'true'}
+
+            # send data
+            requests.post(url, json = json.dumps(data))
+
             while True:
                 if check_password(mp_hands, mp_draw, hands):
                     break
