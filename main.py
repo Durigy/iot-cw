@@ -6,6 +6,7 @@ import mediapipe as mp
 import time
 from ultra_sonic import person_detected
 import threading as t
+# from vision import get_finger_count
 # from light import sort_light
 
 mp_hands = mp.solutions.hands
@@ -14,9 +15,10 @@ hands = mp_hands.Hands(static_image_mode=False, max_num_hands = 1, min_detection
 
 unlocked = False
 countdown_over = False
+stop_countdown_for_disarmed = False
 
-def start_countdown(countdown):
-    global unlocked, countdown_over
+def start_countdown_for_alarm(countdown):
+    global unlocked
     start = time.time()
     while time.time() - start < countdown and not unlocked:
         continue
@@ -30,20 +32,20 @@ def start_countdown(countdown):
 
 
 def armed_mode():
+    buzzer('--')
+    setText('ARMED', 'green')
+    time.sleep(1.5)
     setText('', 'off')
 
-    global unlocked, countdown_over
+    global unlocked
 
     unlocked = False
-    countdown_over = False
 
     while True:
         if person_detected():
-            # global unlocked, countdown_over
             countdown = 3
             unlocked = False
-            countdown_over = False
-            thread = t.Thread(target=start_countdown, args=[countdown])
+            thread = t.Thread(target=start_countdown_for_alarm, args=[countdown])
             thread.start()
             while True:
                 if check_password(mp_hands, mp_draw, hands):
@@ -54,11 +56,42 @@ def armed_mode():
     
     disarmed_mode()
 
+def start_countdown_for_disarmed(countdown):
+    global countdown_over, stop_countdown_for_disarmed
+    start = time.time()
+    while time.time() - start < countdown and not stop_countdown_for_disarmed:
+        continue
+    
+    if stop_countdown_for_disarmed:
+        stop_countdown_for_disarmed = False
+        exit()
+
+    countdown_over = True
+    exit()
 
 def disarmed_mode():
-    global unlocked
+    global unlocked, countdown_over, stop_countdown_for_disarmed
     unlocked = True
-    setText('', 'off')           
+    setText('', 'off')
+    countdown = 5
+    while True:
+        if person_detected():
+            countdown_over = False
+            setText("5: Armed Mode")
+            thread = t.Thread(target=start_countdown_for_disarmed, args=[countdown])
+            thread.start()
+            while not countdown_over:
+                if get_finger_count(mp_hands, mp_draw, hands) == 5:
+                    stop_countdown_for_disarmed = True
+                    thread.join()
+                    break
+            if countdown_over:
+                setText('', 'off')
+                continue
+            else:
+                break
+
+    armed_mode()
 
 def set_off_alarm():
     # set off alarm and continuously check global unlock variable to turn it off
@@ -80,9 +113,8 @@ def main():
 
     setup_password(mp_hands, mp_draw, hands)
 
-    disarmed_mode()
+    # disarmed_mode()
 
-    # FOR TESTING WE CALL armed()
     armed_mode()
 
 

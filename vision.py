@@ -1,5 +1,9 @@
 import cv2 as cv
 from collections import Counter
+# import matplotlib
+# matplotlib.use('Agg')
+# import gi
+# gi.require_version('Gtk', '2.0')
 
 def normalizeFingerCount(fingercount, input_samples, SAMPLES_COUNT, MIN_SAMPLES):
 
@@ -44,7 +48,7 @@ def detectFingersUp(res, frame, mp_hands, mp_draw, distance_thresholds):
 
 def get_finger_count(mp_hands, mp_draw, hands):
     
-    cap = cv.VideoCapture(0)
+    cap = cv.VideoCapture(1)
 
     SAMPLES_COUNT = 0
     MIN_SAMPLES = 3
@@ -73,21 +77,25 @@ def get_finger_count(mp_hands, mp_draw, hands):
             else:
                 break
 
+        # cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+        # cv.waitKey()
+        
     cap.release()
     
     return password_digit
 
 
-        #cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
-
-        # if cv.waitKey(1) == 'q':
-        #     break
-            # identifyPassword(fingercount)
-
-        # cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
-
-        # if cv.waitKey(1) == 'q':
-        #     break
+    #     cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
 
     # cap.release()
-    #cv.destroyAllWindows()
+    # cv.destroyAllWindows()
+
+if __name__ == "__main__":
+    import mediapipe as mp
+
+    mp_hands = mp.solutions.hands
+    mp_draw = mp.solutions.drawing_utils
+    hands = mp_hands.Hands(static_image_mode=False, max_num_hands = 1, min_detection_confidence=0.70)
+
+    while True:
+        print(get_finger_count(mp_hands, mp_draw, hands))
