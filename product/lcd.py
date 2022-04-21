@@ -58,6 +58,12 @@ def textCommand(cmd):
 # set display text \n for second line(or auto wrap)     
 def setText(text, color='white'):
 
+    textCommand(0x01) # clear display
+    time.sleep(.05)
+    textCommand(0x08 | 0x04) # display on, no cursor
+    textCommand(0x28) # 2 lines
+    time.sleep(.05)
+    
     if color == 'red':
         setRGB(255, 0 , 0)
     elif color == 'green':
@@ -71,11 +77,7 @@ def setText(text, color='white'):
     elif color == 'off':
         setRGB(0, 0, 0)
 
-    textCommand(0x01) # clear display
-    time.sleep(.05)
-    textCommand(0x08 | 0x04) # display on, no cursor
-    textCommand(0x28) # 2 lines
-    time.sleep(.05)
+    
     count = 0
     row = 0
     for c in text:
@@ -89,3 +91,4 @@ def setText(text, color='white'):
                 continue
         count += 1
         bus.write_byte_data(DISPLAY_TEXT_ADDR,0x40,ord(c))
+        time.sleep(0.05)

@@ -38,11 +38,13 @@ def check_password(mp_hands, mp_draw, hands):
             pwd_list.append(finger_count)
 
         print(pwd_list)
-
-        setText(' '.join(str(i) for i in pwd_list))
+        print(' '.join(str(i) for i in pwd_list))
+        to_display = ' '.join(str(i) for i in pwd_list)
+        setText(to_display)
         buzzer('.')
 
     # if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
+    # print('returning true check_password')
     return True
     # else:
     #     return False
@@ -90,7 +92,7 @@ def setup_password(mp_hands, mp_draw, hands):
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
 
-        setText('Save password?\n1: Yes, 2: No. Try again.')
+        setText('Save password?\n1: Yes, 2: No')
 
         decision = ''
 
@@ -111,6 +113,7 @@ def setup_password(mp_hands, mp_draw, hands):
                 f.write(hashed_password)
             break
         else:
+            setText('')
             buzzer('..')
             time.sleep(2)
         

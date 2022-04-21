@@ -6,9 +6,9 @@ import mediapipe as mp
 import time
 from ultra_sonic import person_detected
 import threading as t
-# from vision import get_finger_count
+from vision import get_finger_count
 # from light import sort_light
-from light import sort_light
+from light import sort_light, turn_light_off
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
@@ -34,7 +34,7 @@ def start_countdown_for_alarm(countdown):
 
 def armed_mode():
     buzzer('--')
-    setText('ARMED', 'green')
+    setText('[ARMED]', 'red')
     time.sleep(1.5)
     setText('', 'off')
 
@@ -45,20 +45,25 @@ def armed_mode():
     while True:
         if person_detected():
             # check the lights and turn them on
-            sort_light()
+            light_turned_on = sort_light()
 
             # global unlocked, countdown_over
-            countdown = 3
-            unlocked = False
+            countdown = 8
+            # unlocked = False
             thread = t.Thread(target=start_countdown_for_alarm, args=[countdown])
             thread.start()
             while True:
                 if check_password(mp_hands, mp_draw, hands):
                     break
+            # thread.join()
             break
+        time.sleep(0.02)
 
     # at this point the password will have been accepted
     
+    if light_turned_on:
+        turn_light_off()
+
     disarmed_mode()
 
 def start_countdown_for_disarmed(countdown):
@@ -77,6 +82,8 @@ def start_countdown_for_disarmed(countdown):
 def disarmed_mode():
     global unlocked, countdown_over, stop_countdown_for_disarmed
     unlocked = True
+    setText('[DISARMED]', 'green')
+    time.sleep(2.5)
     setText('', 'off')
     countdown = 5
     while True:
@@ -88,26 +95,30 @@ def disarmed_mode():
             while not countdown_over:
                 if get_finger_count(mp_hands, mp_draw, hands) == 5:
                     stop_countdown_for_disarmed = True
-                    thread.join()
                     break
+            # thread.join()
             if countdown_over:
                 setText('', 'off')
                 continue
             else:
                 break
 
+        time.sleep(0.02)
+        
+
     armed_mode()
 
 def set_off_alarm():
     # set off alarm and continuously check global unlock variable to turn it off
+    global unlocked
     while True:
-        global unlocked
+        print(unlocked)
         if not unlocked:
             buzzer('-----')
         else:
             break
         time.sleep(1)
-    disarmed_mode()
+    # disarmed_mode()
 
 
 # for testing use password as a global variable

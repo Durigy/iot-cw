@@ -27,9 +27,17 @@ def sort_light(threshold = 500, repeat_times = 3):
 
     if abs(sensor_value / repeat_times) < threshold:
         # Send HIGH to switch on LED
-        grovepi.digitalWrite(led,1)
+        # grovepi.digitalWrite(led,1)
+        turn_light_on()
         return True
     else:
         # Send LOW to switch off LED
-        grovepi.digitalWrite(led,0)
+        # grovepi.digitalWrite(led,0)
+        turn_light_off()
         return False
+
+def turn_light_off():
+    grovepi.digitalWrite(led,0)
+
+def turn_light_on():
+    grovepi.digitalWrite(led,1)

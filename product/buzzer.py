@@ -2,6 +2,7 @@ import grovepi
 import time
 
 def buzzer(code, dur = 0.01):
+    # return
     buzzer = 8
 
     grovepi.pinMode(buzzer, 'OUTPUT')
