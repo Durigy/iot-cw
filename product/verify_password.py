@@ -6,11 +6,21 @@ from buzzer import buzzer
 from lcd import setText
 import bcrypt
 from os.path import exists
+import requests
+# from main import api_key, url, unlocked, device_name, device_id
 # from ast import literal_eval # https://www.askpython.com/python/string/python-convert-string-to-list
 
-def check_password(mp_hands, mp_draw, hands):
+# api_key = '851db27bf1b1c6a0dc8f' #ae2ce6622d27d55654d784614e77'
+# url = 'https://5qu.me/api/'
+# device_name = "Security System 1"
+# device_id = ''
+# unlocked = False
+
+def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
     setText('', 'white')
     
+    reset_counter = 0
+
     pwd_list = []
     finger_count = 0
 
@@ -31,6 +41,7 @@ def check_password(mp_hands, mp_draw, hands):
             if finger_count == 0:
                 pwd_list = []
                 setText('Empty', 'red')
+                finger_count += 1
                 continue
 
             if len(pwd_list) == 0:
@@ -48,6 +59,9 @@ def check_password(mp_hands, mp_draw, hands):
 
     # if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
     # print('returning true check_password')
+
+    requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
+
     return True
     # else:
     #     return False
@@ -75,7 +89,10 @@ def set_password(mp_hands, mp_draw, hands):
     return pwd_list
 
 
-def setup_password(mp_hands, mp_draw, hands):
+def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked):
+
+    reset_counter = 0
+
     for _ in range(1):
         setText('', 'purple')
         buzzer('...')
@@ -87,10 +104,10 @@ def setup_password(mp_hands, mp_draw, hands):
             f = open("p.txt", 'r')
             hashed_pwd = f.read()
             f.close()
-            if hashed_pwd != '': return False
+            if hashed_pwd != '': return (False, '')
         except:
             print('Error reading password!')
-            return
+            return (False, '')
 
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
@@ -114,8 +131,35 @@ def setup_password(mp_hands, mp_draw, hands):
             time.sleep(2)
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
-            break
+
+            r = requests.post(url+'device', data = {
+                'hashed_password': hashed_password,
+                'api_key':api_key,
+                'name': device_name,
+                'is_armed': not unlocked
+                })
+            
+            print(r.text)
+
+
+            # device_id = r.json()
+            # print(device_id)
+            # device_id = r.json()['id']
+            # print(device_id)
+
+
+            a = requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
+            print(a.text)
+
+            # new = requests.post(url+'device/get', data={'api_key':api_key, 'device_id':device_id})
+            # print(new.json())
+
+
+
+            return (True, device_id)
+            # break
         else:
+            reset_counter += 1
             setText('')
             buzzer('..')
             time.sleep(2)
