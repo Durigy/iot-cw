@@ -48,7 +48,7 @@ def detectFingersUp(res, frame, mp_hands, mp_draw, distance_thresholds):
 
 def get_finger_count(mp_hands, mp_draw, hands):
     
-    cap = cv.VideoCapture(1)
+    cap = cv.VideoCapture(0)
 
     SAMPLES_COUNT = 0
     MIN_SAMPLES = 3

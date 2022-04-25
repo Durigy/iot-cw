@@ -1,4 +1,3 @@
-from verify_password import check_password, setup_password
 from lcd import setText
 from buzzer import buzzer
 # from button import read_button
@@ -11,6 +10,9 @@ from vision import get_finger_count
 from light import sort_light, turn_light_off
 import requests
 import json
+from verify_password import check_password, setup_password
+from datetime import datetime
+
 
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
@@ -20,7 +22,14 @@ unlocked = False
 countdown_over = False
 stop_countdown_for_disarmed = False
 
-def start_countdown_for_alarm(countdown):
+api_key = '851db27bf1b1c6a0dc8f' #ae2ce6622d27d55654d784614e77'
+url = 'https://5qu.me/api/'
+device_name = "Security System 1"
+device_id = ''
+unlocked = False
+
+
+def start_countdown_for_alarm(countdown, light_turned_on):
     global unlocked
     start = time.time()
     while time.time() - start < countdown and not unlocked:
@@ -30,7 +39,7 @@ def start_countdown_for_alarm(countdown):
         # return
     else:
         # prioritize setting off the alarm then return to the caller
-        set_off_alarm()
+        set_off_alarm(light_turned_on)
         exit()
 
 
@@ -50,13 +59,13 @@ def armed_mode():
             light_turned_on = sort_light()
 
             # global unlocked, countdown_over
-            countdown = 8
+            countdown = 60
             # unlocked = False
-            thread = t.Thread(target=start_countdown_for_alarm, args=[countdown])
+            thread = t.Thread(target=start_countdown_for_alarm, args=[countdown, light_turned_on])
             thread.start()
 
             while True:
-                if check_password(mp_hands, mp_draw, hands):
+                if check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
                     break
             # thread.join()
             break
@@ -66,6 +75,14 @@ def armed_mode():
     
     if light_turned_on:
         turn_light_off()
+
+    r = requests.post(url+'device/send_data', data = {
+        'device_id': device_id,
+        'api_key':api_key,
+        'light': light_turned_on,
+        'time': datetime.utcnow,
+        'is_intruder': False
+    })
 
     disarmed_mode()
 
@@ -111,8 +128,17 @@ def disarmed_mode():
 
     armed_mode()
 
-def set_off_alarm():
+def set_off_alarm(light_turned_on):
     # set off alarm and continuously check global unlock variable to turn it off
+
+    r = requests.post(url+'device/send_data', data = {
+        'device_id': device_id,
+        'api_key':api_key,
+        'light': light_turned_on,
+        'time': datetime.utcnow,
+        'is_intruder': True
+    })
+
     global unlocked
     while True:
         print(unlocked)
@@ -128,21 +154,34 @@ def set_off_alarm():
 password = ''
 def main():
 
-# url = 'https://5qu.me/api/send_data'
-    url = 'https://rlwb.space/pytest2/api'
-    data = {'doorOpen': 'true'}
-
-    # send data
-    r = requests.post(url, json = json.dumps(data))
-    print(f"{r.text} HERE HER HERE H")
-
     setText('', 'white')
 
-    setup_password(mp_hands, mp_draw, hands)
+    # api_key = '851db27bf1b1c6a0dc8f' #ae2ce6622d27d55654d784614e77'
+    # url = 'https://5qu.me/api/'
+    # device_name = "Security System 1"
+    # device_id = ''
+    # unlocked = False
+
+    # r = requests.post(f'{url}device', data = {
+    #     'hashed_password': 'hashed_password_string',
+    #     'api_key':api_key,
+    #     'name': device_name,
+    #     'is_armed': not unlocked
+    #     })
+    
+    # global device_id
+    # device_id = r.json()['id']
+
+    # print(r.json())
+    global device_id
+    result = setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked)
+    if result[0]:
+        device_id = result[1]
 
     # disarmed_mode()
 
     armed_mode()
+
 
 
 
