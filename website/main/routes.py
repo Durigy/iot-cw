@@ -88,7 +88,7 @@ device_data_post_args = reqparse.RequestParser()
 device_data_post_args.add_argument("api_key", type=str, help="API key not sent", required=True)
 device_data_post_args.add_argument("light", type=bool, help="Light not sent")
 device_data_post_args.add_argument("device_id", type=str, help="Device ID not sent", required=True)
-device_data_post_args.add_argument("time", type=datetime, help="Time status not sent")
+device_data_post_args.add_argument("time", type=str, help="Time status not sent")
 device_data_post_args.add_argument("is_intruder", type=bool, help="Is Intruder not sent")
 device_data_post_args.add_argument("reset_counter", type=bool, help="Counter not sent")
 
@@ -177,15 +177,18 @@ class DeviceSendDataAPI(Resource):
         user = User.query.filter_by(api_key=args['api_key']).first()
         if not user: abort(404, message="no user")
 
+        # device = Device.query.filter_by(id=args['device']).first()
+        # if not device: abort(404, message="no device")
+
         gened_id = generate_id()
 
         device_data = DeviceData(
             id = gened_id,
             light = args['light'],
-            is_armed = args['is_armed'],
+            is_intruder = args['is_intruder'],
             time = args['time'],
             reset_counter = args['reset_counter'],
-            user_id = user.id
+            device_id = args['device_id']
         )
 
         db.session.add(device_data)

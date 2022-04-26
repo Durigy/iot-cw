@@ -17,7 +17,7 @@ def load_user(user_id):
 
 class Device(db.Model):
     id = db.Column(db.String(20), primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     is_armed  = db.Column(db.Boolean, nullable = True, default = False)
 
