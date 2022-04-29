@@ -82,8 +82,8 @@ def armed_mode():
             'device_id': device_id,
             'api_key':api_key,
             'light': light_turned_on,
-            'time': datetime.utcnow,
-            'is_intruder': False
+            'time': datetime.utcnow(),
+            'is_intruder': ''
         })
     except:
         pass
@@ -140,8 +140,8 @@ def set_off_alarm(light_turned_on):
             'device_id': device_id,
             'api_key':api_key,
             'light': light_turned_on,
-            'time': datetime.utcnow,
-            'is_intruder': True
+            'time': datetime.utcnow(),
+            'is_intruder': '1'
         })
     except:
         pass

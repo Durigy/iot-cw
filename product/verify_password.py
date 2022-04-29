@@ -212,8 +212,10 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
                         'api_key': api_key, 
                         'device_id': device_id,
                         'time': str(dt),
-                        'is_intruder': False,
-                        'light': False
+                        'is_intruder': None,
+                        'light': None
+                        # 'is_intruder': '',
+                        # 'light': '' #send FALSE values using empty strings
                     }
                 )
                 print(a.json())
