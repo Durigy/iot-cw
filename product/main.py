@@ -76,13 +76,17 @@ def armed_mode():
     if light_turned_on:
         turn_light_off()
 
-    r = requests.post(url+'device/send_data', data = {
-        'device_id': device_id,
-        'api_key':api_key,
-        'light': light_turned_on,
-        'time': datetime.utcnow,
-        'is_intruder': False
-    })
+
+    try:
+        r = requests.post(url+'device/send_data', data = {
+            'device_id': device_id,
+            'api_key':api_key,
+            'light': light_turned_on,
+            'time': datetime.utcnow,
+            'is_intruder': False
+        })
+    except:
+        pass
 
     disarmed_mode()
 
@@ -131,13 +135,16 @@ def disarmed_mode():
 def set_off_alarm(light_turned_on):
     # set off alarm and continuously check global unlock variable to turn it off
 
-    r = requests.post(url+'device/send_data', data = {
-        'device_id': device_id,
-        'api_key':api_key,
-        'light': light_turned_on,
-        'time': datetime.utcnow,
-        'is_intruder': True
-    })
+    try:
+        r = requests.post(url+'device/send_data', data = {
+            'device_id': device_id,
+            'api_key':api_key,
+            'light': light_turned_on,
+            'time': datetime.utcnow,
+            'is_intruder': True
+        })
+    except:
+        pass
 
     global unlocked
     while True:
@@ -175,8 +182,17 @@ def main():
     # print(r.json())
     global device_id
     result = setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked)
+
+
     if result[0]:
         device_id = result[1]
+    else:
+        try:
+            f = open("device_id.txt", 'r')
+            device_id = f.read()
+            f.close()
+        except:
+            pass
 
     # disarmed_mode()
 
