@@ -1,3 +1,4 @@
+from datetime import datetime
 from distutils.log import error
 import pwd
 import time
@@ -41,7 +42,8 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
             if finger_count == 0:
                 pwd_list = []
                 setText('Empty', 'red')
-                finger_count += 1
+                # finger_count += 1
+                reset_counter += 1
                 continue
 
             if len(pwd_list) == 0:
@@ -132,24 +134,43 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
 
-            r = requests.post(url+'device', data = {
-                'hashed_password': hashed_password,
-                'api_key':api_key,
-                'name': device_name,
-                'is_armed': not unlocked
-                })
+            r = requests.post(
+                url+'device', 
+                data = {
+                    'hashed_password': hashed_password,
+                    'api_key':api_key,
+                    'name': device_name,
+                    'is_armed': not unlocked
+                }
+            )
             
-            print(r.text)
+            # print(r.text)
 
 
             # device_id = r.json()
             # print(device_id)
-            # device_id = r.json()['id']
-            # print(device_id)
+            device_id = r.json()['id']
+            print(device_id)
 
+            time.sleep(2)
 
-            a = requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
-            print(a.text)
+            dt = datetime.utcnow()
+
+            print(dt)
+
+            a = requests.post(
+                url+'device/send_data', 
+                data={
+                    'reset_counter': str(reset_counter), 
+                    'api_key': api_key, 
+                    'device_id': device_id,
+                    'time': str(dt),
+                    'is_intruder': False,
+                    'light': False
+                }
+            )
+            print(a.json())
+            print(f'reset counter: {reset_counter}')
 
             # new = requests.post(url+'device/get', data={'api_key':api_key, 'device_id':device_id})
             # print(new.json())
