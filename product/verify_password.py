@@ -18,6 +18,7 @@ import requests
 # unlocked = False
 
 def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
+
     setText('', 'white')
     
     reset_counter = 0
@@ -34,6 +35,37 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
     except:
         print('Error reading password!')
         return
+
+    try:
+        # check if password has been updated online
+        setText('Checking\nPassword', 'blue')
+
+        r = requests.post(
+            url+'device/get', 
+            data={
+                'api_key': api_key, 
+                'device_id': device_id
+            }
+        )
+        
+        time.sleep(1)
+
+        updated_hashed_password = r.json()['hashed_password']
+        print(r.json())
+        print(updated_hashed_password)
+        print(hashed_pwd)
+
+        if updated_hashed_password != hashed_pwd:
+            setText('[Password Updated]')
+            time.sleep(1)
+            with open('p.txt', 'w') as f:
+                f.write(updated_hashed_password)
+        else:
+            pass        
+    except:
+        pass
+
+    setText('[Enter\nPassword]', 'white')
 
     while not bcrypt.checkpw(str.encode(''.join(str(i) for i in pwd_list)), str.encode(hashed_pwd)):
         try:
@@ -62,7 +94,10 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
     # if bcrypt.checkpw(str(''.join(str(i) for i in pwd_list)), hashed_pwd):
     # print('returning true check_password')
 
-    requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
+    try:
+        requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
+    except:
+        pass
 
     return True
     # else:
@@ -134,22 +169,33 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
 
-            r = requests.post(
-                url+'device', 
-                data = {
-                    'hashed_password': hashed_password,
-                    'api_key':api_key,
-                    'name': device_name,
-                    'is_armed': not unlocked
-                }
-            )
-            
+
+            device_id = ''
+            try:
+                    
+                r = requests.post(
+                    url+'device', 
+                    data = {
+                        'hashed_password': hashed_password,
+                        'api_key':api_key,
+                        'name': device_name,
+                        'is_armed': not unlocked
+                    }
+                )
+
+                device_id = r.json()['id']
+
+                with open('device_id.txt', 'w') as f:
+                    f.write(device_id)
+
+            except:
+                pass
+
             # print(r.text)
 
 
             # device_id = r.json()
             # print(device_id)
-            device_id = r.json()['id']
             print(device_id)
 
             time.sleep(2)
@@ -158,19 +204,26 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
 
             print(dt)
 
-            a = requests.post(
-                url+'device/send_data', 
-                data={
-                    'reset_counter': str(reset_counter), 
-                    'api_key': api_key, 
-                    'device_id': device_id,
-                    'time': str(dt),
-                    'is_intruder': False,
-                    'light': False
-                }
-            )
-            print(a.json())
-            print(f'reset counter: {reset_counter}')
+            try:
+                a = requests.post(
+                    url+'device/send_data', 
+                    data={
+                        'reset_counter': str(reset_counter), 
+                        'api_key': api_key, 
+                        'device_id': device_id,
+                        'time': str(dt),
+                        'is_intruder': None,
+                        'light': None
+                        # 'is_intruder': '',
+                        # 'light': '' #send FALSE values using empty strings
+                    }
+                )
+                print(a.json())
+                print(f'reset counter: {reset_counter}')
+                
+            except:
+                pass
+
 
             # new = requests.post(url+'device/get', data={'api_key':api_key, 'device_id':device_id})
             # print(new.json())
@@ -181,7 +234,7 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
             # break
         else:
             reset_counter += 1
-            setText('')
+            setText('CREATE PASSWORD', 'purple')
             buzzer('..')
             time.sleep(2)
         
