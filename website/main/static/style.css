@@ -1,0 +1,116 @@
+/*
+#########################
+
+    Setup Stuff
+
+#########################
+*/
+html, body, header {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    font-family: arial, sans-serif;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    background-color: #fafafa;
+}
+
+
+#container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.flashes {
+    padding: 15px;
+    background-color: #feb3b3;
+    color: black;
+    /* border: 2px solid red;
+    border-radius: 7px; */
+    border-radius: 7px;
+    text-align: center;
+}
+
+button {
+    border: none;
+    padding: 7px 15px;
+    background-color: #6789e6;
+    border-radius: 5px;
+    color: white;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+a {
+    color: #6789e6;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.btn {
+    border: none;
+    padding: 7px 15px;
+    background-color: #6789e6;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+
+/*
+#########################
+
+    Header Stuff
+
+#########################
+*/
+header {
+    position: sticky;
+    top: 0;
+    height: 50px;
+    width: 100%;
+    z-index: 999;
+    background-color: #bbb;
+}
+
+nav {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+nav li {
+    display: inline;
+}
+
+nav a {
+    padding: 10px;
+    text-decoration: none;
+    color: #fff;
+}
+
+/* my password jeff */
+
+.wrapper{
+    color: blue;
+}
+
+#button6{
+    font-size: 40px;
+}

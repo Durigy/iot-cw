@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <h1>hello world</h1>
+
+    {% for device in devices %}
+
+        <p>Device name: {{ device.name }}</p>
+
+        <p>Is armed status: {{ device.is_armed }}</p>
+
+        <br>
+
+    {% endfor %}
+
+{% endblock %}

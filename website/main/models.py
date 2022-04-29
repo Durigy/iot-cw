@@ -32,7 +32,7 @@ class DeviceInfo(db.Model):
     id = db.Column(db.String(20), primary_key=True)
     time = db.Column(db.DateTime, nullable = True)
     light = db.Column(db.Boolean, nullable = True)
-    is_intruder = db.Column(db.Boolean, nullable = True, default = False)
+    is_intruder = db.Column(db.Boolean, nullable = True)
     reset_counter = db.Column(db.Integer, nullable = True)
 
 # Links (ForeignKeys) #
