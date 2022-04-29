@@ -25,10 +25,10 @@ class Device(db.Model):
     user_id = db.Column(db.String(20), db.ForeignKey('user.id'), nullable = False)
 
 # Relationships #
-    device_data = db.relationship('DeviceData', backref = 'device', lazy = True, foreign_keys = 'DeviceData.device_id')
+    device_data = db.relationship('DeviceInfo', backref = 'device', lazy = True, foreign_keys = 'DeviceInfo.device_id')
 
 
-class DeviceData(db.Model):
+class DeviceInfo(db.Model):
     id = db.Column(db.String(20), primary_key=True)
     time = db.Column(db.DateTime, nullable = True)
     light = db.Column(db.Boolean, nullable = True)
