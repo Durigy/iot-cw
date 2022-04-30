@@ -49,6 +49,18 @@ def armed_mode():
     time.sleep(1.5)
     setText('', 'off')
 
+    try:
+        r2 = requests.put(url+'device', data = {
+            'device_id': device_id,
+            'api_key': api_key,
+            'is_armed': '1'
+        })
+        # print(r2.json())
+    except:
+        pass
+    
+    # print(device_id)
+    # print(api_key)
     global unlocked
 
     unlocked = False
@@ -85,6 +97,17 @@ def armed_mode():
             'time': datetime.utcnow(),
             'is_intruder': ''
         })
+    except:
+        pass
+
+    try:
+        r3 = requests.put(url+'device', data = {
+            'device_id': device_id,
+            'api_key':api_key,
+            'is_armed': ''
+        })
+
+        # print(r3.json())
     except:
         pass
 

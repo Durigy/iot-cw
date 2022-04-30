@@ -51,15 +51,16 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
         time.sleep(1)
 
         updated_hashed_password = r.json()['hashed_password']
-        print(r.json())
-        print(updated_hashed_password)
-        print(hashed_pwd)
+        # print(r.json())
+        # print(updated_hashed_password)
+        # print(hashed_pwd)
 
         if updated_hashed_password != hashed_pwd:
             setText('[Password Updated]')
             time.sleep(1)
             with open('p.txt', 'w') as f:
                 f.write(updated_hashed_password)
+            hashed_pwd = updated_hashed_password
         else:
             pass        
     except:
@@ -130,12 +131,6 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
 
     reset_counter = 0
 
-    for _ in range(1):
-        setText('', 'purple')
-        buzzer('...')
-        setText('CREATE PASSWORD', 'purple')
-        time.sleep(0.5)
-
     if exists('p.txt'):
         try:
             f = open("p.txt", 'r')
@@ -145,6 +140,12 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
         except:
             print('Error reading password!')
             return (False, '')
+
+    for _ in range(1):
+        setText('', 'purple')
+        buzzer('...')
+        setText('CREATE PASSWORD', 'purple')
+        time.sleep(0.5)
 
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)

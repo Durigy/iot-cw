@@ -57,38 +57,40 @@ def textCommand(cmd):
 
 # set display text \n for second line(or auto wrap)     
 def setText(text, color='white'):
+    try:
+        textCommand(0x01) # clear display
+        time.sleep(.05)
+        textCommand(0x08 | 0x04) # display on, no cursor
+        textCommand(0x28) # 2 lines
+        time.sleep(.05)
+        
+        if color == 'red':
+            setRGB(255, 0 , 0)
+        elif color == 'green':
+            setRGB(0, 255, 0)
+        elif color == 'blue':
+            setRGB(100, 100 , 255)
+        elif color == 'white':
+            setRGB(255, 255, 255)
+        elif color == 'purple':
+            setRGB(155, 30, 155)
+        elif color == 'off':
+            setRGB(0, 0, 0)
 
-    textCommand(0x01) # clear display
-    time.sleep(.05)
-    textCommand(0x08 | 0x04) # display on, no cursor
-    textCommand(0x28) # 2 lines
-    time.sleep(.05)
-    
-    if color == 'red':
-        setRGB(255, 0 , 0)
-    elif color == 'green':
-        setRGB(0, 255, 0)
-    elif color == 'blue':
-        setRGB(100, 100 , 255)
-    elif color == 'white':
-        setRGB(255, 255, 255)
-    elif color == 'purple':
-        setRGB(155, 30, 155)
-    elif color == 'off':
-        setRGB(0, 0, 0)
-
-    
-    count = 0
-    row = 0
-    for c in text:
-        if c == '\n' or count == 16:
-            count = 0
-            row += 1
-            if row == 2:
-                break
-            textCommand(0xc0)
-            if c == '\n':
-                continue
-        count += 1
-        bus.write_byte_data(DISPLAY_TEXT_ADDR,0x40,ord(c))
-        time.sleep(0.05)
+        
+        count = 0
+        row = 0
+        for c in text:
+            if c == '\n' or count == 16:
+                count = 0
+                row += 1
+                if row == 2:
+                    break
+                textCommand(0xc0)
+                if c == '\n':
+                    continue
+            count += 1
+            bus.write_byte_data(DISPLAY_TEXT_ADDR,0x40,ord(c))
+            time.sleep(0.05)
+    except:
+        pass
