@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <h1>Hello There</h1>
+
+    <h2>User Info</h2>
+
+    <br>
+
+    <p>API key: {{ current_user.api_key }}</p>
+    <p>Don't ever share this with anyone</p>
+
+{% endblock %}

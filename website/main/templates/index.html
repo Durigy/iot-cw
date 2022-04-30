@@ -1,16 +1,27 @@
 {% extends "layout.html" %}
 {% block content %}
 
-    <h1>hello world</h1>
+    <h1>Hello There</h1>
 
-    {% for device in devices %}
+    <div>
+        <h2>Device Info</h2>
+        {% for device in devices %}
+            <br>
+            <div>
+                <h3>Device name: {{ device.name }}</h3>
 
-        <p>Device name: {{ device.name }}</p>
+                <p>Armed status: {{ device.is_armed }}</p>
 
-        <p>Is armed status: {{ device.is_armed }}</p>
+                <a href="{{ url_for('update_device_pwd', device_id = device.id) }}">Change Unlock Password</a>
+            </div>
+        {% endfor %}
 
-        <br>
-
-    {% endfor %}
+        {% if not devices %}
+            <br>
+            <h3>No devices found</h3>
+            <p>Use your api key when setting up a device so it shows here</p>
+        {% endif %}
+        
+    </div>
 
 {% endblock %}
