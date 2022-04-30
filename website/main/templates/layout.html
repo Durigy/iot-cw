@@ -13,15 +13,13 @@
         <header>
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
                     {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
                         <li><a href="{{ url_for('account') }}">Account</a></li>
-                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                        <li><a cless="logout-btn" href="{{ url_for('logout') }}">Logout</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('login') }}">Login</a></li>
-                        or
-                        <li><a href="{{ url_for('register') }}">Register</a></li>
-                        <li>Hello, Friend</li>
+                        <li><a class="login-btn" href="{{ url_for('login') }}">Login</a></li>
+                        <li><a class="register-btn" href="{{ url_for('register') }}">Register</a></li>
                     {% endif %}
                 </ul>
                 

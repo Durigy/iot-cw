@@ -1,44 +1,67 @@
 from datetime import datetime
-from . import app, db
+from . import app, db, api
 import secrets
 from flask import render_template, url_for, request, redirect, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import LoginForm, RegistrationForm
-from flask_restful import Api, Resource, abort, marshal_with, reqparse, fields
+from .forms import LoginForm, RegistrationForm, ChangeDevicePasswordForm
+from flask_restful import Resource, abort, marshal_with, reqparse, fields
 from .models import User, Device, DeviceInfo
 import bcrypt
 
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return "<h1>404, There's an error</h1>"
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template(
+        '404.html',
+        title='404'
+    )
 
-# @app.errorhandler(500)
-# def page_not_found(e):
-#     return "<h1>500, There's an error</h1>"
+@app.errorhandler(500)
+def page_not_found(e):
+    return "<h1>500, There's an error</h1>"
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
     devices = Device.query.filter_by(user_id = current_user.id).all()
+
     return render_template(
         'index.html',
-        title='home',
+        title='Account',
         devices = devices
     )
 
 @app.route('/account')
 @login_required
 def account():
-    return '<h1>Hello There</h1>'
-    # return render_template(
-    #     'index.html',
-    #     title='home'
-    # )
+    return render_template(
+        'user/account.html',
+        title='Account'
+    )
 
-# @app.route('/')
-# def home():
-#     return '<h1>Hello There</h1>'
+@app.route('/update_device/<device_id>', methods=['GET', 'POST'])
+@login_required
+def update_device_pwd(device_id):
+    device = Device.query.get_or_404(device_id)
+    if device.user_id != current_user.id: 
+        flash('device not found')
+        return redirect('404')
+
+    form = ChangeDevicePasswordForm()
+    if form.validate_on_submit and request.method == "POST":
+        hashed_password = bcrypt.hashpw(bytes(form.password.data,'UTF-8'), bcrypt.gensalt())
+        device.password = hashed_password
+        db.session.commit()
+        flash('Device password updated')
+        return redirect(url_for('index'))
+
+    return render_template(
+        'device/device_update_details.html',
+        title='Update Device',
+        form=form,
+        device = device
+    )
+
 
 #################################
 #                               #
@@ -113,24 +136,24 @@ def generate_id():
     return id
 
 
-#### api ####
-
-# Alram activated
-# @app.route("/api/<api_key>/send_data", methods=['GET', 'POST'])
-# def logout(api_key):
-# @app.route("/api/send_data", methods=['GET', 'POST'])
-# def api_send_data():
-#     content = request.json
-#     print(content)
-#     return True
-
-api = Api(app)
+#################################
+#                               #
+#           API Stuff           #
+#                               #
+#################################
 
 device_post_args = reqparse.RequestParser()
 device_post_args.add_argument("api_key", type=str, help="API key not sent", required=True)
 device_post_args.add_argument("name", type=str, help="Name not sent")
 device_post_args.add_argument("hashed_password", type=str, help="Password not sent")
 device_post_args.add_argument("is_armed", type=bool, help="Armed status not sent")
+
+device_put_args = reqparse.RequestParser()
+device_put_args.add_argument("api_key", type=str, help="API key not sent", required=True)
+device_put_args.add_argument("device_id", type=str, help="Device ID not sent", required=True)
+device_put_args.add_argument("name", type=str, help="Name not sent")
+device_put_args.add_argument("hashed_password", type=str, help="Password not sent")
+device_put_args.add_argument("is_armed", type=bool, help="Armed status not sent")
 
 device_get_args = reqparse.RequestParser()
 device_get_args.add_argument("device_id", type=str, help="Device ID not sent", required=True)
@@ -145,13 +168,13 @@ device_data_post_args.add_argument("is_intruder", type=bool, help="Is Intruder n
 device_data_post_args.add_argument("reset_counter", type=int, help="Counter not sent")
 
 
-resource_fields = {
-    'id': fields.String,
-    'name': fields.String,
-    'hashed_password': fields.String,
-    'is_armed': fields.Boolean,
-    'user_id': fields.String
-}
+# resource_fields = {
+#     'id': fields.String,
+#     'name': fields.String,
+#     'hashed_password': fields.String,
+#     'is_armed': fields.Boolean,
+#     'user_id': fields.String
+# }
 
 class DeviceAPI(Resource):
     # @marshal_with(resource_fields)
@@ -195,17 +218,20 @@ class DeviceAPI(Resource):
 
     # @marshal_with(resource_fields)
     def put(self):
-        args = device_post_args.parse_args()
+        args = device_put_args.parse_args()
 
         if not User.query.filter_by(api_key=args['api_key']).first(): abort(404, message="no user")
 
-        device = Device.query.filter_by(id=args['id']).first()
+        device = Device.query.filter_by(id=args['device_id']).first()
         if not device: abort(404, message="Couldn't find the result")
         
         
         if args['name']: device.name = args['name']
         if args['hashed_password']: device.hashed_password = args['hashed_password']
-        if args['is_armed']: device.is_armed = args['is_armed']
+        if args['is_armed'] == True: 
+            device.is_armed = True
+        elif args['is_armed'] == False: 
+            device.is_armed = False
 
         db.session.commit()
         return {
