@@ -1,3 +1,4 @@
+from datetime import datetime
 from . import db, login_manager
 from flask_login import UserMixin
 
@@ -30,7 +31,7 @@ class Device(db.Model):
 
 class DeviceInfo(db.Model):
     id = db.Column(db.String(20), primary_key=True)
-    time = db.Column(db.DateTime, nullable = True)
+    time = db.Column(db.DateTime, nullable = True, default = datetime.utcnow)
     light = db.Column(db.Boolean, nullable = True)
     is_intruder = db.Column(db.Boolean, nullable = True)
     reset_counter = db.Column(db.Integer, nullable = True)
