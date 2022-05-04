@@ -5,7 +5,7 @@ import mediapipe as mp
 import time
 from ultra_sonic import person_detected
 import threading as t
-from vision import get_finger_count
+from vision import get_finger_count, get_finger_count_with_time_restriction
 # from light import sort_light
 from light import sort_light, turn_light_off
 import requests
@@ -64,11 +64,13 @@ def armed_mode():
     global unlocked
 
     unlocked = False
+    light_turned_on = ''
 
     while True:
         if person_detected():
             # check the lights and turn them on
-            light_turned_on = sort_light()
+            light_turned_on = '' if not sort_light() else 1
+            print('from  main ' + str(light_turned_on))
 
             # global unlocked, countdown_over
             countdown = 60
@@ -127,7 +129,7 @@ def start_countdown_for_disarmed(countdown):
     exit()
 
 def disarmed_mode():
-    global unlocked, countdown_over, stop_countdown_for_disarmed
+    global unlocked, stop_countdown_for_disarmed
     unlocked = True
     setText('[DISARMED]', 'green')
     time.sleep(2.5)
@@ -135,15 +137,20 @@ def disarmed_mode():
     countdown = 5
     while True:
         if person_detected():
+            global countdown_over
             countdown_over = False
+            sort_light()
             setText("5: Armed Mode")
             thread = t.Thread(target=start_countdown_for_disarmed, args=[countdown])
             thread.start()
             while not countdown_over:
-                if get_finger_count(mp_hands, mp_draw, hands) == 5:
+                if get_finger_count_with_time_restriction(mp_hands, mp_draw, hands) == 5:
                     stop_countdown_for_disarmed = True
                     break
             # thread.join()
+
+            turn_light_off()
+
             if countdown_over:
                 setText('', 'off')
                 continue
@@ -151,7 +158,6 @@ def disarmed_mode():
                 break
 
         time.sleep(0.02)
-        
 
     armed_mode()
 

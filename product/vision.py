@@ -1,5 +1,6 @@
 import cv2 as cv
 from collections import Counter
+import time
 # import matplotlib
 # matplotlib.use('Agg')
 # import gi
@@ -82,13 +83,52 @@ def get_finger_count(mp_hands, mp_draw, hands):
         
     cap.release()
     
-    return password_digit
-
+    return password_digit    
 
     #     cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
 
     # cap.release()
     # cv.destroyAllWindows()
+
+def get_finger_count_with_time_restriction(mp_hands, mp_draw, hands, countdown = 5):
+    cap = cv.VideoCapture(0)
+
+    SAMPLES_COUNT = 0
+    MIN_SAMPLES = 3
+    input_samples = []
+
+    distance_thresholds = {'thumb': 1.2, 'index': 2, 'middle': 2, 'ring': 2, 'pinky': 2}
+
+    password_digit = None
+
+    start = time.time()
+
+    while SAMPLES_COUNT <= MIN_SAMPLES and time.time() - start < countdown:
+
+        ret, frame = cap.read()
+        if not ret:
+            continue
+
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        res = hands.process(frame)
+
+        if res.multi_hand_landmarks:
+            fingercount = detectFingersUp(res, frame, mp_hands, mp_draw, distance_thresholds)
+            SAMPLES_COUNT += 1
+            password_digit = normalizeFingerCount(fingercount, input_samples, SAMPLES_COUNT, MIN_SAMPLES)
+
+            if password_digit is None:
+                continue
+            else:
+                break
+
+        # cv.imshow('output', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+        # cv.waitKey()
+        
+    cap.release()
+    
+    return password_digit   
+
 
 if __name__ == "__main__":
     import mediapipe as mp
