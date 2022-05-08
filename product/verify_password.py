@@ -55,6 +55,7 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
         # print(updated_hashed_password)
         # print(hashed_pwd)
 
+        # if password received from server is not the same as the same password, this means that the password has been updated from the online interface
         if updated_hashed_password != hashed_pwd:
             setText('[Password Updated]')
             time.sleep(1)
@@ -68,11 +69,13 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
 
     setText('[Enter\nPassword]', 'white')
 
+    # the inputted password through computer vision is hashed and checked in each loop to see if it matches the correct password
     while not bcrypt.checkpw(str.encode(''.join(str(i) for i in pwd_list)), str.encode(hashed_pwd)):
         try:
-            finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
+            finger_count = vision.get_finger_count(mp_hands, mp_draw, hands) # finger count is password digit
 
             if finger_count == 0:
+                # fist is detected, this means reset password
                 pwd_list = []
                 setText('Empty', 'red')
                 # finger_count += 1
@@ -82,11 +85,12 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
             if len(pwd_list) == 0:
                 pwd_list.append(finger_count)
             elif finger_count != pwd_list[-1]:
+                # only read password digits list if the detected digit is not the same as the last inputted digit (this means we can't have 1225 as a password for instance)
                 pwd_list.append(finger_count)
 
             print(pwd_list)
             print(' '.join(str(i) for i in pwd_list))
-            to_display = ' '.join(str(i) for i in pwd_list)
+            to_display = ' '.join(str(i) for i in pwd_list) # parsing a string of the current inputted password to be displayed in the LCD display
             setText(to_display)
             buzzer('.')
         except:
@@ -96,6 +100,7 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
     # print('returning true check_password')
 
     try:
+        # send how many times the user had to reset the inputted password - this will determine how accurate is the computer vision software
         requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
     except:
         pass
@@ -111,6 +116,7 @@ def set_password(mp_hands, mp_draw, hands):
     while True:
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
         if finger_count == 0:
+            # fist detected - ask user 
             buzzer('--')
             break
         

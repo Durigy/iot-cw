@@ -11,6 +11,7 @@ def person_detected(max_distance = 50, repeat_times = 5):
     
     distance = 0
 
+    # collect data and find average later on
     for _ in range(repeat_times):
         try:
             # Read distance value from Ultrasonic
@@ -23,6 +24,7 @@ def person_detected(max_distance = 50, repeat_times = 5):
         time.sleep(0.05) # don't overload the i2c bus
         # print(distance)
 
+    # if distance detected is less than the pre-set 50cm, it means that the door is opened (so a person will be entering)
     if abs(distance / repeat_times) < max_distance:
         # print("ultra distance " + str(abs(distance / repeat_times)))
         return True

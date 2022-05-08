@@ -55,7 +55,8 @@ def textCommand(cmd):
     bus.write_byte_data(DISPLAY_TEXT_ADDR,0x80,cmd)
 
 
-# set display text \n for second line(or auto wrap)     
+# LCD is an actuator
+# This function takes in the text to output and the color that the display should have
 def setText(text, color='white'):
     try:
         textCommand(0x01) # clear display
@@ -64,6 +65,7 @@ def setText(text, color='white'):
         textCommand(0x28) # 2 lines
         time.sleep(.05)
         
+        # presets for colors
         if color == 'red':
             setRGB(255, 0 , 0)
         elif color == 'green':
@@ -81,6 +83,7 @@ def setText(text, color='white'):
         count = 0
         row = 0
         for c in text:
+            # auto-wrap to fit text in display
             if c == '\n' or count == 16:
                 count = 0
                 row += 1

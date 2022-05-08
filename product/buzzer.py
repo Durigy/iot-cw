@@ -1,8 +1,10 @@
 import grovepi
 import time
 
+# actuator - used to provide audio feedback to the user
+# takes in a string of any length that consists of '.' (short sound) '-' long sound
+# and plays back the audio
 def buzzer(code, dur = 0.01):
-    return
     buzzer = 8
 
     grovepi.pinMode(buzzer, 'OUTPUT')
