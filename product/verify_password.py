@@ -17,6 +17,7 @@ import requests
 # device_id = ''
 # unlocked = False
 
+# function to check if the password is correct
 def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
 
     setText('', 'white')
@@ -101,7 +102,11 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
 
     try:
         # send how many times the user had to reset the inputted password - this will determine how accurate is the computer vision software
-        requests.post(url+'device/send_data', data={'reset_counter': reset_counter, 'api_key': api_key, 'device_id': device_id})
+        requests.post(url+'device/send_data', data={
+            'reset_counter': reset_counter, 
+            'api_key': api_key, 
+            'device_id': device_id
+        })
     except:
         pass
 
@@ -113,13 +118,16 @@ def check_password(mp_hands, mp_draw, hands, url, api_key, device_id):
 def set_password(mp_hands, mp_draw, hands):
     pwd_list = []
     finger_count = 0
+    # loops until the a fist is recognised
     while True:
         finger_count = vision.get_finger_count(mp_hands, mp_draw, hands)
+        # if a fist is make the while loop is broken and password is returned
         if finger_count == 0:
             # fist detected - ask user 
             buzzer('--')
             break
         
+        # adds the the finger number to the password stack
         if len(pwd_list) == 0:
             pwd_list.append(finger_count)
             buzzer('.')
@@ -128,15 +136,17 @@ def set_password(mp_hands, mp_draw, hands):
             buzzer('.')
 
         print(pwd_list)
-        setText(' '.join(str(i) for i in pwd_list), 'white')
+        setText(' '.join(str(i) for i in pwd_list), 'white') # sets the text of the lcd
 
     return pwd_list
 
 
+# function to set up the password
 def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked):
 
     reset_counter = 0
 
+    # checks if the file exists then if there is a password already stored it brakes out of the setup function
     if exists('p.txt'):
         try:
             f = open("p.txt", 'r')
@@ -147,12 +157,14 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
             print('Error reading password!')
             return (False, '')
 
+    # lcd setup stuff
     for _ in range(1):
         setText('', 'purple')
         buzzer('...')
         setText('CREATE PASSWORD', 'purple')
         time.sleep(0.5)
 
+    # loops until a the password is setup and confirmed by the user
     while True:
         working_pwd = set_password(mp_hands, mp_draw, hands)
 
@@ -160,6 +172,7 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
 
         decision = ''
 
+        # loops until the user decides to confirm the password or enter
         while True:
             decision = vision.get_finger_count(mp_hands, mp_draw, hands)
 
@@ -167,19 +180,21 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
                 continue
 
             break
-            
+        
+        # if the password is entered and confirmed then it is encrypted
         if len(working_pwd) > 0 and decision == 1:
             buzzer('.')
             hashed_password = bcrypt.hashpw(str.encode(''.join(str(i) for i in working_pwd)), bcrypt.gensalt()).decode('utf-8')
             setText('PASSWORD CREATED', 'green')
             time.sleep(2)
+            # writes the hashed password to the file
             with open('p.txt', 'w') as f:
                 f.write(hashed_password)
 
 
             device_id = ''
             try:
-                    
+                # sends the device setup info to the api
                 r = requests.post(
                     url+'device', 
                     data = {
@@ -190,8 +205,10 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
                     }
                 )
 
+                # gets the generated device id returned from the api
                 device_id = r.json()['id']
 
+                # writes the device id to a file
                 with open('device_id.txt', 'w') as f:
                     f.write(device_id)
 
@@ -207,11 +224,13 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
 
             time.sleep(2)
 
+            # gets the current utc time
             dt = datetime.utcnow()
 
             print(dt)
 
             try:
+                # post device info to the api
                 a = requests.post(
                     url+'device/send_data', 
                     data={
@@ -236,7 +255,7 @@ def setup_password(mp_hands, mp_draw, hands, url, api_key, device_name, unlocked
             # print(new.json())
 
 
-
+            # returns the device id
             return (True, device_id)
             # break
         else:

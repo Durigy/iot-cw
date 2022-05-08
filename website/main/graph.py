@@ -2,8 +2,10 @@ import mysql.connector
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-image_location = 'main/static/img/'
+image_location = 'main/static/img/' # where the graph photos with be located
 
+# creates a graph to compare the number intrusions over time
+# returns the graph name as a string
 def intrusions_vs_time(device_id=''):
     try:
         connection = mysql.connector.connect(
@@ -66,6 +68,8 @@ def intrusions_vs_time(device_id=''):
         print(e)
 
 
+# creates a graph to compare the number intrusions over at night when the lights are on compared to turned off
+# returns the graph name as a string
 def intrusions_vs_light_night(device_id=''):
     try:
         connection = mysql.connector.connect(
@@ -124,6 +128,8 @@ def intrusions_vs_light_night(device_id=''):
         print(e)
 
 
+# creates a graph to compare the average number of times a user reset the the password string on the device per day
+# returns the graph name as a string
 def vision_accuracy(device_id=''):
     # graph that displays how effective computer vision software updates have been
     # over time -> x axis one day, y axis average number of reset counter at that day
