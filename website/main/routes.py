@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, RegistrationForm, ChangeDevicePasswordForm
 from flask_restful import Resource, abort, marshal_with, reqparse, fields
 from .models import User, Device, DeviceInfo
+from .graph import intrusions_vs_time 
 import bcrypt
 
 
@@ -25,10 +26,14 @@ def page_not_found(e):
 def index():
     devices = Device.query.filter_by(user_id = current_user.id).all()
 
+    graph_file = intrusions_vs_time()
+
+
     return render_template(
         'index.html',
         title='Account',
-        devices = devices
+        devices = devices,
+        graph_file = graph_file
     )
 
 @app.route('/account')
