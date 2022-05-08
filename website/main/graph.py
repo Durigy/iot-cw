@@ -197,7 +197,7 @@ def vision_accuracy(device_id=''):
         plt.ylabel('Average password resets per day')
         # plt.yticks([int(i) for i in records])
 
-        plt.title("Intrusions during night time with different lighting conditions")
+        plt.title("Computer vision accuracy (the lower the better)")
         
         if len(average_records) == 0:
             plt.savefig(f"{image_location}{device_id}_vision_accuracy_graph.png")
