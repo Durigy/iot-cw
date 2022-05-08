@@ -27,7 +27,9 @@
     <br>
 
     <div class="graphs">
-        <img src="{{ url_for('static', filename=graph_file) }}" alt="Time stuff graph">
+        <img src="{{ url_for('static', filename='img/' + graph_intrusions_vs_time) }}" alt="Time stuff graph">
+        <img src="{{ url_for('static', filename='img/' + graph_intrusions_vs_light_night) }}" alt="Light stuff graph">
+        <img src="{{ url_for('static', filename='img/' + graph_vision_accuracy) }}" alt="Vision stuff graph">
     </div>
 
 {% endblock %}

@@ -2,6 +2,8 @@ import mysql.connector
 from datetime import datetime
 import matplotlib.pyplot as plt
 
+image_location = 'main/static/img/'
+
 def intrusions_vs_time(device_id=''):
     try:
         connection = mysql.connector.connect(
@@ -50,7 +52,7 @@ def intrusions_vs_time(device_id=''):
         # plt.gcf().set_size_inches(50, plt.gcf().get_size_inches()[1])
         # plt.gcf().set_size_inches(50)
 
-        plt.savefig(f"{device_id}_intrusions_vs_time_graph.png")
+        plt.savefig(f"{image_location}{device_id}_intrusions_vs_time_graph.png")
 
         if connection.is_connected():
             connection.close()
@@ -67,23 +69,23 @@ def intrusions_vs_time(device_id=''):
 def intrusions_vs_light_night(device_id=''):
     try:
         connection = mysql.connector.connect(
-            host = '5qu.me',
+            host = 'localhost',
             database = "qume_iot_db",
             user = 'qume_iot_user',
             password = 'dasQuLHW8pC6CR8'
         )
 
-#         cursor = connection.cursor()
+        cursor = connection.cursor()
 
-#         query_intruder = 'select * from device_info where is_intruder="1"'
+        query_intruder = 'select * from device_info where is_intruder="1"'
 
-#         cursor.execute(query_intruder)
+        cursor.execute(query_intruder)
 
-#         records = cursor.fetchall()
+        records = cursor.fetchall()
 
-#         # print(records)
+        # print(records)
 
-#         data = [0, 0] # data: index 0: light off, index 1: light on
+        data = [0, 0] # data: index 0: light off, index 1: light on
         
         night_range = list(range(20, 24)) + list(range(0, 7)) # nighttime is 8pm to 6am
         print(night_range)
@@ -96,26 +98,26 @@ def intrusions_vs_light_night(device_id=''):
                     data[1] += 1
         
 
-#         print(data)
+        print(data)
 
-#         plt.figure(figsize=(9, 6))
+        plt.figure(figsize=(9, 6))
 
-#         plt.xlabel('Light status')#, labelpad=7)
-#         plt.ylabel('# of intrusions')
-#         plt.yticks([int(i) for i in data])
+        plt.xlabel('Light status')#, labelpad=7)
+        plt.ylabel('# of intrusions')
+        plt.yticks([int(i) for i in data])
 
         plt.title("Intrusions during night time with different lighting conditions")
 
         plt.bar([0, 1], data, tick_label=['Off', 'On'])
 
-        plt.savefig(f"{device_id}_intrusions_vs_light_night_graph.png")
+        plt.savefig(f"{image_location}{device_id}_intrusions_vs_light_night_graph.png")
 
         if connection.is_connected():
             connection.close()
             cursor.close()
             print("MySQL connection is closed")
 
-        return f"{device_id}_intrusions_vs_light_night.png"
+        return f"{device_id}_intrusions_vs_light_night_graph.png"
 
     except Exception as e:
         print("[error fetching data]")
@@ -134,12 +136,12 @@ def vision_accuracy(device_id=''):
 
     try:
         connection = mysql.connector.connect(
-            host = '5qu.me',
+            host = 'localhost',
             database = "qume_iot_db",
             user = 'qume_iot_user',
             password = 'dasQuLHW8pC6CR8'
         )
-
+        
         cursor = connection.cursor()
 
         query = f'select time, reset_counter from device_info where device_id="{device_id}" order by time'
@@ -202,7 +204,7 @@ def vision_accuracy(device_id=''):
         else:
             plt.plot([i for i in average_records], [average_records[i] for i in average_records])#, tick_label=['Off', 'On'])
 
-        plt.savefig(f"{device_id}_vision_accuracy_graph.png")
+        plt.savefig(f"{image_location}{device_id}_vision_accuracy_graph.png")
 
         # print(average_records)
 
@@ -211,7 +213,7 @@ def vision_accuracy(device_id=''):
             cursor.close()
             print("MySQL connection is closed")
         
-        return f"{device_id}_vision_accuracy.png"
+        return f"{device_id}_vision_accuracy_graph.png"
 
     except Exception as e:
         print("[error fetching data]")
