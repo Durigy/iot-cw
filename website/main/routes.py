@@ -9,6 +9,14 @@ from .models import User, Device, DeviceInfo
 from .graph import intrusions_vs_time, intrusions_vs_light_night, vision_accuracy
 import bcrypt
 
+# # Reference: https://stackoverflow.com/questions/32237379/python-flask-redirect-to-https-from-http
+# @app.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         code = 301
+#         return redirect(url, code=code)
+
 
 @app.errorhandler(404)
 def page_not_found(e):
