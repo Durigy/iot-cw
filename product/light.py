@@ -6,8 +6,12 @@ light_sensor = 0
 # Connect the LED to digital port D4
 # SIG,NC,VCC,GND
 led = 4
- 
 
+# light on the button - actuator
+
+# determines whether the environment is lit
+# if it isn't, the light is turned on and the function retuns true
+# if it is the light is turned off (in case it was already on) and returns false
 def sort_light(threshold = 500, repeat_times = 3):
     grovepi.pinMode(light_sensor,"INPUT")
     grovepi.pinMode(led,"OUTPUT")
