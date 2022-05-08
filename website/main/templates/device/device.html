@@ -1,8 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="centre">
-        <h1>Update {{ device.name }}</h1>
+        <h1>{{ device.name }}</h1>
     </div>
+
+    <div class="graphs">
+        {% if graph_vision_accuracy | length > 0%}
+            <img src="{{ url_for('static', filename='img/' + graph_vision_accuracy) }}" alt="Vision stuff graph">
+        {% endif %}
+    </div>
+    
+    <br>
+
+    <h2>Change the password</h2>
 
     <div class="note">
         <p>You can only use numbers 1, 2, 3, 4 and 5 to make your password</p>

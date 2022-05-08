@@ -37,16 +37,12 @@ def index():
     graph_intrusions_vs_time = intrusions_vs_time()
     graph_intrusions_vs_light_night = intrusions_vs_light_night()
 
-    graph_vision_accuracy = vision_accuracy() if not vision_accuracy() == None else ''
-
-
     return render_template(
         'index.html',
         title='Account',
         devices = devices,
         graph_intrusions_vs_time = graph_intrusions_vs_time,
-        graph_intrusions_vs_light_night = graph_intrusions_vs_light_night,
-        graph_vision_accuracy = graph_vision_accuracy
+        graph_intrusions_vs_light_night = graph_intrusions_vs_light_night
     )
 
 @app.route('/account')
@@ -57,13 +53,16 @@ def account():
         title='Account'
     )
 
-@app.route('/update_device/<device_id>', methods=['GET', 'POST'])
+@app.route('/device/<device_id>', methods=['GET', 'POST'])
 @login_required
-def update_device_pwd(device_id):
+def device(device_id):
     device = Device.query.get_or_404(device_id)
     if device.user_id != current_user.id: 
         flash('device not found')
         return redirect('404')
+
+    
+    graph_vision_accuracy = vision_accuracy(device_id) if not vision_accuracy(device_id) == None else ''
 
     form = ChangeDevicePasswordForm()
     if form.validate_on_submit and request.method == "POST":
@@ -74,10 +73,11 @@ def update_device_pwd(device_id):
         return redirect(url_for('index'))
 
     return render_template(
-        'device/device_update_details.html',
+        'device/device.html',
         title='Update Device',
         form=form,
-        device = device
+        device = device,
+        graph_vision_accuracy = graph_vision_accuracy
     )
 
 

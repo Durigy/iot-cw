@@ -134,6 +134,8 @@ def vision_accuracy(device_id=''):
         print('no device id; exiting...')
         return
 
+    average_records = ''
+
     try:
         connection = mysql.connector.connect(
             host = 'localhost',
@@ -185,9 +187,9 @@ def vision_accuracy(device_id=''):
             # print('testing')
             # print(average_records) # works
 
-        else:
-            print('no data; exiting...')
-            return
+        # else:
+        #     print('no data; exiting...')
+        #     return
 
         plt.figure(figsize=(9, 6))
         
@@ -198,7 +200,8 @@ def vision_accuracy(device_id=''):
         plt.title("Intrusions during night time with different lighting conditions")
         
         if len(average_records) == 0:
-            plt.savefig(f"{device_id}_vision_accuracy_graph.png")
+            plt.savefig(f"{image_location}{device_id}_vision_accuracy_graph.png")
+            return f'{device_id}_vision_accuracy_graph.png'
         elif len(average_records) == 1:
             plt.bar([i for i in average_records], [average_records[i] for i in average_records])#, tick_label=['Off', 'On'])
         else:
