@@ -24,10 +24,9 @@ boi just run setup.sh
 
 
 # Worked on by:
-
-Bence Barkanyi
-Somaya Goraine
-Ioannis-Marios Stavropoulos
-Elinor Jones
-Haoyu Yin
-Alex Deverson
+- Bence Barkanyi
+- Somaya Goraine
+- Ioannis-Marios Stavropoulos
+- Elinor Jones
+- Haoyu Yin
+- Alex Deverson
