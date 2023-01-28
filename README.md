@@ -21,3 +21,13 @@ pip3 install opencv-contrib-python==4.1.0.25
 
 chmod 777 setup.sh
 boi just run setup.sh
+
+
+# Worked on by:
+
+Bence Barkanyi
+Somaya Goraine
+Ioannis-Marios Stavropoulos
+Elinor Jones
+Haoyu Yin
+Alex Deverson
